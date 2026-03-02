@@ -131,7 +131,7 @@ const Quickstart = () => {
                 <p className="text-sm text-muted-foreground mb-3">
                   In your Supabase dashboard → Authentication → URL Configuration, add:
                 </p>
-                <CodeBlock code="https://your-ref.xupastack.dev/auth/v1/callback" />
+                <CodeBlock code="https://your-ref.gw.xupastack.com/auth/v1/callback" />
                 <p className="text-sm text-muted-foreground mt-3">
                   Also update your OAuth provider (Google Console, GitHub, etc.) with the new callback URL.
                 </p>

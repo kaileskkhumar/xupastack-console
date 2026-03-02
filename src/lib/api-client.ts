@@ -73,7 +73,7 @@ export const api = {
         slug: payload.slug,
         mode: payload.mode,
         status: payload.mode === "managed" ? "active" : "needs-setup",
-        gatewayUrl: payload.mode === "managed" ? `https://${payload.slug}.xupastack.dev` : "",
+        gatewayUrl: payload.mode === "managed" ? `https://${payload.slug}.gw.xupastack.com` : "",
         upstreamUrl: payload.supabaseUrl,
         allowedOrigins: payload.allowedOrigins,
         enabledServices: payload.enabledServices,
@@ -141,7 +141,7 @@ export const api = {
       return url;
     } catch {
       await delay(200);
-      return `${BASE || "https://api.xupastack.dev"}/apps/${id}/config.json?token=mock-token`;
+      return `${BASE || "https://api.xupastack.com"}/apps/${id}/config.json?token=mock-token`;
     }
   },
 
