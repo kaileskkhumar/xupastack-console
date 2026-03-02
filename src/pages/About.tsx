@@ -206,12 +206,7 @@ const About = () => (
               </a>
             </Button>
             <Button asChild variant="ghost" size="icon" className="rounded-full">
-              <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
-                <Linkedin className="h-4 w-4" />
-              </a>
-            </Button>
-            <Button asChild variant="ghost" size="icon" className="rounded-full">
-              <a href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+              <a href="https://x.com/kaileskkhumar" target="_blank" rel="noopener" aria-label="X">
                 <Twitter className="h-4 w-4" />
               </a>
             </Button>
