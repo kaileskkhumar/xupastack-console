@@ -196,8 +196,8 @@ const About = () => (
           </p>
           <div className="flex gap-3">
             <Button asChild variant="outline" size="sm" className="rounded-full">
-              <a href="https://houseofmvps.com" target="_blank" rel="noopener">
-                <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Website
+              <a href="https://in.linkedin.com/in/kailesk-khumar-soundararajan" target="_blank" rel="noopener">
+                <Linkedin className="h-3.5 w-3.5 mr-1.5" /> LinkedIn
               </a>
             </Button>
             <Button asChild variant="ghost" size="icon" className="rounded-full">
