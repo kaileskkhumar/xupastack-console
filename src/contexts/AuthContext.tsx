@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+
+const API_BASE = import.meta.env.VITE_API_BASE || "https://api.xupastack.com";
 
 interface User {
   id: string;
@@ -10,9 +12,10 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  signInWithGitHub: () => Promise<void>;
-  signInWithMagicLink: (email: string) => Promise<void>;
-  signOut: () => void;
+  signInWithGitHub: (next?: string) => void;
+  signInWithMagicLink: (email: string, next?: string) => Promise<{ ok: boolean; error?: string }>;
+  signOut: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -25,25 +28,76 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const signInWithGitHub = useCallback(async () => {
-    // Stub: simulate GitHub OAuth login
-    setUser({ id: "stub-1", email: "dev@example.com", name: "Developer", avatarUrl: undefined });
+  const fetchMe = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/me`, { credentials: "include" });
+      if (!res.ok) {
+        setUser(null);
+        return;
+      }
+      const data = await res.json();
+      setUser({
+        id: data.id,
+        email: data.email,
+        name: data.name || data.email?.split("@")[0] || "User",
+        avatarUrl: data.avatar_url || data.avatarUrl,
+      });
+    } catch {
+      setUser(null);
+    }
   }, []);
 
-  const signInWithMagicLink = useCallback(async (_email: string) => {
-    // Stub: simulate magic link sent
-    // In real implementation, this would send the magic link via backend
-    setUser({ id: "stub-1", email: _email, name: _email.split("@")[0], avatarUrl: undefined });
+  useEffect(() => {
+    setIsLoading(true);
+    fetchMe().finally(() => setIsLoading(false));
+  }, [fetchMe]);
+
+  const signInWithGitHub = useCallback((next?: string) => {
+    const target = next || "/app";
+    window.location.href = `${API_BASE}/auth/github/start?next=${encodeURIComponent(target)}`;
   }, []);
 
-  const signOut = useCallback(() => {
+  const signInWithMagicLink = useCallback(async (email: string, next?: string): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/email/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, next: next || "/app" }),
+      });
+
+      if (res.status === 429) {
+        return { ok: false, error: "Too many attempts. Try again in a minute." };
+      }
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        return { ok: false, error: body.error || "Couldn't sign in. Please try again." };
+      }
+
+      return { ok: true };
+    } catch {
+      return { ok: false, error: "Couldn't sign in. Please try again." };
+    }
+  }, []);
+
+  const signOut = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE}/auth/logout`, { method: "POST", credentials: "include" });
+    } catch {
+      // proceed even if logout call fails
+    }
     setUser(null);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    await fetchMe();
+  }, [fetchMe]);
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, signInWithGitHub, signInWithMagicLink, signOut }}>
+    <AuthContext.Provider value={{ user, isLoading, signInWithGitHub, signInWithMagicLink, signOut, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
