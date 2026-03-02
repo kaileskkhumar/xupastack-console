@@ -1,28 +1,50 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { MOCK_GATEWAYS } from "@/data/mock-gateways";
-import { useToast } from "@/hooks/use-toast";
+import { useApp, useUpdateApp } from "@/hooks/use-apps";
 
 const ALL_SERVICES = ["rest", "auth", "storage", "realtime", "functions", "graphql"];
 
 const ConsoleSettings = () => {
   const { id } = useParams();
-  const { toast } = useToast();
-  const gw = MOCK_GATEWAYS.find((g) => g.id === id) || MOCK_GATEWAYS[0];
+  const { data: gw, isLoading } = useApp(id);
+  const updateApp = useUpdateApp(id!);
 
-  const [origins, setOrigins] = useState(gw.allowedOrigins.join(", "));
-  const [services, setServices] = useState([...gw.enabledServices]);
-  const [rateLimit, setRateLimit] = useState(String(gw.rateLimit));
-  const [strictMode, setStrictMode] = useState(gw.strictMode);
+  const [origins, setOrigins] = useState("");
+  const [services, setServices] = useState<string[]>([]);
+  const [rateLimit, setRateLimit] = useState("");
+  const [strictMode, setStrictMode] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  // Sync form state when data arrives
+  if (gw && !initialized) {
+    setOrigins(gw.allowedOrigins.join(", "));
+    setServices([...gw.enabledServices]);
+    setRateLimit(String(gw.rateLimit));
+    setStrictMode(gw.strictMode);
+    setInitialized(true);
+  }
 
   const toggleService = (s: string) =>
     setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
   const handleSave = () => {
-    toast({ title: "Settings saved", description: "Gateway configuration updated." });
+    updateApp.mutate({
+      allowedOrigins: origins.split(",").map((o) => o.trim()).filter(Boolean),
+      enabledServices: services,
+      rateLimit: Number(rateLimit) || 1000,
+      strictMode,
+    });
   };
+
+  if (isLoading || !gw) {
+    return (
+      <div className="section-container py-10 flex items-center justify-center min-h-[40vh]">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="section-container py-10 max-w-2xl">
@@ -108,10 +130,11 @@ const ConsoleSettings = () => {
 
           <button
             onClick={handleSave}
-            className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            disabled={updateApp.isPending}
+            className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            <Save className="h-3.5 w-3.5" />
-            Save settings
+            {updateApp.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+            {updateApp.isPending ? "Saving…" : "Save settings"}
           </button>
         </div>
       </motion.div>

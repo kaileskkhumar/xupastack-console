@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Settings, Copy, Check, ExternalLink, Pause, Trash2, Server, Cloud } from "lucide-react";
+import { ArrowLeft, Settings, Copy, Check, ExternalLink, Pause, Trash2, Server, Cloud, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { MOCK_GATEWAYS } from "@/data/mock-gateways";
 import StatusBadge from "@/components/console/StatusBadge";
 import StackTabs from "@/components/console/StackTabs";
 import ConfirmModal from "@/components/console/ConfirmModal";
 import CodeBlock from "@/components/CodeBlock";
-import { useToast } from "@/hooks/use-toast";
+import { useApp, useDeactivateApp, useDeleteApp } from "@/hooks/use-apps";
 
 const STACK_TABS = [
   { label: "Next.js", value: "nextjs" },
@@ -20,21 +19,23 @@ const STACK_TABS = [
 const ConsoleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const gw = MOCK_GATEWAYS.find((g) => g.id === id) || MOCK_GATEWAYS[0];
+  const { data: gw, isLoading, isError } = useApp(id);
+  const deactivate = useDeactivateApp(id!);
+  const deleteApp = useDeleteApp();
 
   const [copied, setCopied] = useState(false);
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const copyUrl = async () => {
+    if (!gw) return;
     await navigator.clipboard.writeText(gw.gatewayUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const getSnippet = (stack: string) => {
-    const url = gw.gatewayUrl || "https://your-gateway.xupastack.dev";
+    const url = gw?.gatewayUrl || "https://your-gateway.xupastack.dev";
     const snippets: Record<string, string> = {
       nextjs: `// .env.local\nNEXT_PUBLIC_SUPABASE_URL=${url}`,
       vite: `// .env\nVITE_SUPABASE_URL=${url}`,
@@ -44,6 +45,23 @@ const ConsoleDetail = () => {
     };
     return snippets[stack] || snippets.nextjs;
   };
+
+  if (isLoading) {
+    return (
+      <div className="section-container py-10 flex items-center justify-center min-h-[40vh]">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (isError || !gw) {
+    return (
+      <div className="section-container py-10 text-center">
+        <p className="text-sm text-destructive mb-4">Gateway not found or failed to load.</p>
+        <Link to="/app" className="text-sm text-primary hover:underline">Back to gateways</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="section-container py-10">
@@ -66,12 +84,8 @@ const ConsoleDetail = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Link
-              to={`/app/${gw.id}/settings`}
-              className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-            >
-              <Settings className="h-3.5 w-3.5" />
-              Settings
+            <Link to={`/app/${gw.id}/settings`} className="inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors">
+              <Settings className="h-3.5 w-3.5" /> Settings
             </Link>
           </div>
         </div>
@@ -84,19 +98,11 @@ const ConsoleDetail = () => {
               <p className="text-sm font-mono text-foreground truncate">{gw.gatewayUrl}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={copyUrl}
-                className="h-8 px-3 rounded-lg border border-border text-xs font-medium flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
-              >
+              <button onClick={copyUrl} className="h-8 px-3 rounded-lg border border-border text-xs font-medium flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
                 {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                 {copied ? "Copied" : "Copy"}
               </button>
-              <a
-                href={gw.gatewayUrl}
-                target="_blank"
-                rel="noopener"
-                className="h-8 w-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-              >
+              <a href={gw.gatewayUrl} target="_blank" rel="noopener" className="h-8 w-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
@@ -109,15 +115,8 @@ const ConsoleDetail = () => {
             <Server className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <div>
               <p className="text-sm text-foreground font-medium">Consider self-hosted mode</p>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                For maximum privacy and control, deploy into your own Cloudflare account. Self-hosted mode is free and keeps your data plane under your control.
-              </p>
-              <Link
-                to="/app/new"
-                className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline mt-2"
-              >
-                Create a self-hosted gateway →
-              </Link>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">For maximum privacy and control, deploy into your own Cloudflare account. Self-hosted mode is free and keeps your data plane under your control.</p>
+              <Link to="/app/new" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline mt-2">Create a self-hosted gateway →</Link>
             </div>
           </div>
         )}
@@ -179,16 +178,18 @@ const ConsoleDetail = () => {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setDeactivateOpen(true)}
-              className="h-9 px-4 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors flex items-center gap-2"
+              disabled={deactivate.isPending}
+              className="h-9 px-4 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors flex items-center gap-2 disabled:opacity-50"
             >
-              <Pause className="h-3.5 w-3.5" />
+              {deactivate.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Pause className="h-3.5 w-3.5" />}
               {gw.status === "paused" ? "Reactivate" : "Deactivate"}
             </button>
             <button
               onClick={() => setDeleteOpen(true)}
-              className="h-9 px-4 rounded-lg border border-destructive/50 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
+              disabled={deleteApp.isPending}
+              className="h-9 px-4 rounded-lg border border-destructive/50 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 disabled:opacity-50"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              {deleteApp.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
               Delete
             </button>
           </div>
@@ -198,7 +199,7 @@ const ConsoleDetail = () => {
       <ConfirmModal
         open={deactivateOpen}
         onClose={() => setDeactivateOpen(false)}
-        onConfirm={() => toast({ title: gw.status === "paused" ? "Gateway reactivated" : "Gateway deactivated" })}
+        onConfirm={() => { deactivate.mutate(); setDeactivateOpen(false); }}
         title={gw.status === "paused" ? "Reactivate gateway?" : "Deactivate gateway?"}
         description={gw.status === "paused" ? "This will resume traffic routing through this gateway." : "Traffic will stop flowing through this gateway. You can reactivate it anytime."}
         confirmLabel={gw.status === "paused" ? "Reactivate" : "Deactivate"}
@@ -207,7 +208,7 @@ const ConsoleDetail = () => {
       <ConfirmModal
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
-        onConfirm={() => { toast({ title: "Gateway deleted" }); navigate("/app"); }}
+        onConfirm={async () => { await deleteApp.mutateAsync(gw.id); navigate("/app"); }}
         title="Delete gateway?"
         description="This action is irreversible. All configuration and history for this gateway will be permanently removed."
         confirmLabel="Delete gateway"
