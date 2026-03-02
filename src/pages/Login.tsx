@@ -1,43 +1,51 @@
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Github, ArrowRight, Shield, Loader2 } from "lucide-react";
+import { Github, ArrowRight, Shield, Loader2, Mail, RotateCw } from "lucide-react";
 import Logo from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login = () => {
   const { signInWithGitHub, signInWithMagicLink } = useAuth();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const next = searchParams.get("next") || "/app";
 
   const [email, setEmail] = useState("");
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<"github" | "email" | "resend" | null>(null);
+  const [error, setError] = useState("");
 
-  const handleGitHub = async () => {
-    setLoading(true);
+  const handleGitHub = () => {
+    setLoading("github");
+    signInWithGitHub(next);
+    // Browser navigates away; keep loading state
+  };
+
+  const sendMagicLink = async (variant: "email" | "resend") => {
+    if (!emailRegex.test(email)) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    setError("");
+    setLoading(variant);
     try {
-      await signInWithGitHub();
-      navigate(next, { replace: true });
+      const result = await signInWithMagicLink(email, next);
+      if (result.ok) {
+        setMagicLinkSent(true);
+      } else {
+        setError(result.error || "Couldn't sign in. Please try again.");
+      }
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
-  const handleMagicLink = async (e: React.FormEvent) => {
+  const handleMagicLink = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setLoading(true);
-    try {
-      await signInWithMagicLink(email);
-      setMagicLinkSent(true);
-      // Stub: in real flow, user clicks link in email → callback sets session → redirect
-      setTimeout(() => navigate(next, { replace: true }), 1200);
-    } finally {
-      setLoading(false);
-    }
+    sendMagicLink("email");
   };
 
   return (
@@ -64,10 +72,10 @@ const Login = () => {
           {/* GitHub */}
           <button
             onClick={handleGitHub}
-            disabled={loading}
+            disabled={loading !== null}
             className="w-full h-11 rounded-lg bg-foreground text-background text-sm font-semibold flex items-center justify-center gap-2.5 hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            {loading && !showEmail ? (
+            {loading === "github" ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Github className="h-4.5 w-4.5" />
@@ -88,6 +96,7 @@ const Login = () => {
               onClick={() => setShowEmail(true)}
               className="w-full h-11 rounded-lg border border-border bg-card text-foreground text-sm font-medium flex items-center justify-center gap-2 hover:bg-secondary transition-colors"
             >
+              <Mail className="h-4 w-4" />
               Email magic link
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
@@ -95,10 +104,29 @@ const Login = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-3"
+              className="text-center py-3 space-y-3"
             >
               <p className="text-sm font-medium text-foreground">Check your inbox</p>
-              <p className="text-xs text-muted-foreground mt-1">We sent a login link to <span className="text-foreground">{email}</span></p>
+              <p className="text-xs text-muted-foreground mt-1">
+                We sent a secure sign-in link to{" "}
+                <span className="text-foreground font-medium">{email}</span>.
+                It expires in 15 minutes.
+              </p>
+              <button
+                onClick={() => sendMagicLink("resend")}
+                disabled={loading === "resend"}
+                className="inline-flex items-center gap-1.5 text-xs text-primary hover:opacity-80 transition-opacity disabled:opacity-50"
+              >
+                {loading === "resend" ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <RotateCw className="h-3 w-3" />
+                )}
+                Resend
+              </button>
+              <p className="text-[11px] text-muted-foreground">
+                If you don't see it, check spam/promotions.
+              </p>
             </motion.div>
           ) : (
             <motion.form
@@ -111,17 +139,23 @@ const Login = () => {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (error) setError("");
+                }}
                 placeholder="you@example.com"
                 autoFocus
                 className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
+              {error && (
+                <p className="text-xs text-destructive">{error}</p>
+              )}
               <button
                 type="submit"
-                disabled={!email || loading}
+                disabled={!email || loading !== null}
                 className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Send magic link"}
+                {loading === "email" ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Send magic link"}
               </button>
             </motion.form>
           )}

@@ -23,8 +23,8 @@ const ConsoleLayout = ({ children }: { children: ReactNode }) => {
     return location.pathname.startsWith(href);
   };
 
-  const handleSignOut = () => {
-    signOut();
+  const handleSignOut = async () => {
+    await signOut();
     navigate("/", { replace: true });
   };
 
