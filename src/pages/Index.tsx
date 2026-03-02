@@ -1,14 +1,20 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Layout from "@/components/layout/Layout";
+import Hero from "@/components/home/Hero";
+import ChooseFix from "@/components/home/ChooseFix";
+import HowItWorks from "@/components/home/HowItWorks";
+import FeaturesGrid from "@/components/home/FeaturesGrid";
+import TrustSection from "@/components/home/TrustSection";
+import DonateSection from "@/components/home/DonateSection";
 
-const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
-};
+const Index = () => (
+  <Layout>
+    <Hero />
+    <ChooseFix />
+    <HowItWorks />
+    <FeaturesGrid />
+    <TrustSection />
+    <DonateSection />
+  </Layout>
+);
 
 export default Index;
