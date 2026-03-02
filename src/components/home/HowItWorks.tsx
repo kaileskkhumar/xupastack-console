@@ -23,25 +23,27 @@ const steps = [
 ];
 
 const HowItWorks = () => (
-  <section className="py-20 md:py-28 bg-secondary/30">
+  <section className="py-24 md:py-32 relative">
     <div className="section-container">
-      <AnimatedSection className="text-center mb-14">
+      <AnimatedSection className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">How it works</h2>
         <p className="text-muted-foreground text-lg">Three steps. No magic, no lock-in.</p>
       </AnimatedSection>
 
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-2xl mx-auto space-y-0">
         {steps.map((step, i) => (
           <AnimatedSection key={step.number} delay={i * 0.12}>
-            <div className="flex gap-5">
+            <div className="flex gap-6">
               <div className="flex flex-col items-center">
-                <div className="h-10 w-10 rounded-full bg-foreground text-background flex items-center justify-center text-sm font-bold shrink-0">
+                <div className="h-11 w-11 rounded-full border-2 border-primary/50 bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0 shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)]">
                   {step.number}
                 </div>
-                {i < steps.length - 1 && <div className="w-px flex-1 bg-border mt-3" />}
+                {i < steps.length - 1 && (
+                  <div className="w-px flex-1 bg-gradient-to-b from-primary/40 to-primary/5 my-2" />
+                )}
               </div>
-              <div className="pb-8 flex-1 min-w-0">
-                <h3 className="text-lg font-semibold text-foreground mb-1">{step.title}</h3>
+              <div className="pb-12 flex-1 min-w-0">
+                <h3 className="text-lg font-semibold text-foreground mb-1.5">{step.title}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{step.description}</p>
                 <CodeBlock code={step.code} />
               </div>
