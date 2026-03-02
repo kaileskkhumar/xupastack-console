@@ -53,7 +53,7 @@ const Footer = () => (
         <p className="text-sm text-muted-foreground">
           Built by{" "}
           <a
-            href="https://houseofmvps.com"
+            href="https://in.linkedin.com/in/kailesk-khumar-soundararajan"
             target="_blank"
             rel="noopener"
             className="text-foreground font-medium hover:text-primary transition-colors"
