@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { lazy, Suspense } from "react";
+import { AuthProvider } from "@/contexts/AuthContext";
+import RequireAuth from "@/components/auth/RequireAuth";
 import Index from "./pages/Index";
 import Quickstart from "./pages/Quickstart";
 import Docs from "./pages/Docs";
@@ -28,43 +30,47 @@ const ConsoleHelp = lazy(() => import("./pages/console/ConsoleHelp"));
 
 const queryClient = new QueryClient();
 
-const ConsoleWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<div className="min-h-screen bg-background" />}>
-    <ConsoleLayout>{children}</ConsoleLayout>
-  </Suspense>
+const ProtectedConsole = ({ children }: { children: React.ReactNode }) => (
+  <RequireAuth>
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ConsoleLayout>{children}</ConsoleLayout>
+    </Suspense>
+  </RequireAuth>
 );
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public pages */}
-            <Route path="/" element={<Index />} />
-            <Route path="/quickstart" element={<Quickstart />} />
-            <Route path="/docs" element={<Docs />} />
-            <Route path="/guides" element={<Guides />} />
-            <Route path="/security" element={<Security />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/donate" element={<Donate />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/login" element={<Login />} />
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public pages */}
+              <Route path="/" element={<Index />} />
+              <Route path="/quickstart" element={<Quickstart />} />
+              <Route path="/docs" element={<Docs />} />
+              <Route path="/guides" element={<Guides />} />
+              <Route path="/security" element={<Security />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/donate" element={<Donate />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/login" element={<Login />} />
 
-            {/* Console (lazy-loaded) */}
-            <Route path="/app" element={<ConsoleWrapper><Suspense fallback={null}><ConsoleDashboard /></Suspense></ConsoleWrapper>} />
-            <Route path="/app/new" element={<ConsoleWrapper><Suspense fallback={null}><ConsoleNew /></Suspense></ConsoleWrapper>} />
-            <Route path="/app/help" element={<ConsoleWrapper><Suspense fallback={null}><ConsoleHelp /></Suspense></ConsoleWrapper>} />
-            <Route path="/app/:id" element={<ConsoleWrapper><Suspense fallback={null}><ConsoleDetail /></Suspense></ConsoleWrapper>} />
-            <Route path="/app/:id/deploy" element={<ConsoleWrapper><Suspense fallback={null}><ConsoleDeploy /></Suspense></ConsoleWrapper>} />
-            <Route path="/app/:id/settings" element={<ConsoleWrapper><Suspense fallback={null}><ConsoleSettings /></Suspense></ConsoleWrapper>} />
+              {/* Console (auth-gated, lazy-loaded) */}
+              <Route path="/app" element={<ProtectedConsole><Suspense fallback={null}><ConsoleDashboard /></Suspense></ProtectedConsole>} />
+              <Route path="/app/new" element={<ProtectedConsole><Suspense fallback={null}><ConsoleNew /></Suspense></ProtectedConsole>} />
+              <Route path="/app/help" element={<ProtectedConsole><Suspense fallback={null}><ConsoleHelp /></Suspense></ProtectedConsole>} />
+              <Route path="/app/:id" element={<ProtectedConsole><Suspense fallback={null}><ConsoleDetail /></Suspense></ProtectedConsole>} />
+              <Route path="/app/:id/deploy" element={<ProtectedConsole><Suspense fallback={null}><ConsoleDeploy /></Suspense></ProtectedConsole>} />
+              <Route path="/app/:id/settings" element={<ProtectedConsole><Suspense fallback={null}><ConsoleSettings /></Suspense></ProtectedConsole>} />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>
