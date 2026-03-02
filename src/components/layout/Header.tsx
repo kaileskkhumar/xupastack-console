@@ -5,12 +5,10 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 
 const navItems = [
-  { label: "Quickstart", href: "/quickstart" },
   { label: "Docs", href: "/docs" },
   { label: "Guides", href: "/guides" },
-  { label: "Security", href: "/security" },
-  { label: "FAQ", href: "/faq" },
   { label: "Blog", href: "/blog" },
+  { label: "Donate", href: "/donate" },
 ];
 
 const Header = () => {
@@ -46,10 +44,10 @@ const Header = () => {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <Link
-            to="/donate"
+            to="/app"
             className="hidden sm:inline-flex px-4 py-1.5 text-sm font-medium rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
           >
-            Donate
+            Open Console
           </Link>
           <ThemeToggle />
           <button
@@ -80,11 +78,11 @@ const Header = () => {
               </Link>
             ))}
             <Link
-              to="/donate"
+              to="/app"
               onClick={() => setMobileOpen(false)}
               className="px-3 py-2 rounded-lg text-sm font-medium text-primary"
             >
-              Donate
+              Open Console
             </Link>
           </nav>
         </div>
