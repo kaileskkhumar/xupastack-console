@@ -18,6 +18,9 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import About from "./pages/About";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 // Lazy-loaded console pages
 const ConsoleLayout = lazy(() => import("./components/layout/ConsoleLayout"));
@@ -58,6 +61,9 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
 
               {/* Console (auth-gated, lazy-loaded) */}
               <Route path="/app" element={<ProtectedConsole><Suspense fallback={null}><ConsoleDashboard /></Suspense></ProtectedConsole>} />

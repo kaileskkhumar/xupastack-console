@@ -6,13 +6,16 @@ const Footer = () => (
     <div className="section-container py-14">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-10">
         {/* Brand */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 max-w-xs">
           <Link to="/" className="flex items-center gap-2 font-display font-bold text-foreground">
             <Logo className="h-6 w-6" />
             XupaStack
           </Link>
-          <p className="text-sm text-muted-foreground max-w-xs">
+          <p className="text-sm text-muted-foreground">
             Open-source gateway for Supabase connectivity. Free forever.
+          </p>
+          <p className="text-xs text-muted-foreground/70 leading-relaxed mt-1">
+            We are not affiliated with Supabase Inc or anyone. XupaStack is an open-source project for the developer community.
           </p>
         </div>
 
@@ -24,6 +27,7 @@ const Footer = () => (
               <li><Link to="/quickstart" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Quickstart</Link></li>
               <li><Link to="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Docs</Link></li>
               <li><Link to="/guides" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Guides</Link></li>
+              <li><Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link></li>
             </ul>
           </div>
           <div>
@@ -44,9 +48,28 @@ const Footer = () => (
         </div>
       </div>
 
-      <div className="mt-12 pt-6 border-t border-border/30 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <p className="text-xs text-muted-foreground">© 2025 XupaStack. Free and open-source.</p>
-        <p className="text-xs text-muted-foreground">MIT License</p>
+      {/* Builder credit */}
+      <div className="mt-10 pt-6 border-t border-border/30">
+        <p className="text-sm text-muted-foreground">
+          Built by{" "}
+          <a
+            href="https://houseofmvps.com"
+            target="_blank"
+            rel="noopener"
+            className="text-foreground font-medium hover:text-primary transition-colors"
+          >
+            Kailesk Khumar (HouseofMVP's)
+          </a>
+        </p>
+      </div>
+
+      <div className="mt-6 pt-6 border-t border-border/30 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} XupaStack. Free and open-source.</p>
+        <div className="flex items-center gap-4">
+          <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
+          <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
+          <p className="text-xs text-muted-foreground">MIT License</p>
+        </div>
       </div>
     </div>
   </footer>

@@ -5,6 +5,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 
 const navItems = [
+  { label: "About", href: "/about" },
   { label: "Docs", href: "/docs" },
   { label: "Guides", href: "/guides" },
   { label: "Blog", href: "/blog" },
