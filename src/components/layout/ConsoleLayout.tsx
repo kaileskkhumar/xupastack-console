@@ -1,8 +1,9 @@
-import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { LayoutGrid, HelpCircle, Heart, User } from "lucide-react";
+import { ReactNode, useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LayoutGrid, HelpCircle, Heart, User, LogOut, ChevronDown } from "lucide-react";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 const consoleNav = [
   { label: "Apps", href: "/app", icon: LayoutGrid },
@@ -12,11 +13,31 @@ const consoleNav = [
 
 const ConsoleLayout = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const isActive = (href: string) => {
     if (href === "/app") return location.pathname === "/app";
     return location.pathname.startsWith(href);
   };
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/", { replace: true });
+  };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col grain-overlay bg-background">
@@ -46,12 +67,37 @@ const ConsoleLayout = ({ children }: { children: ReactNode }) => {
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link
-              to="/app"
-              className="flex items-center justify-center h-8 w-8 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <User className="h-4 w-4" />
-            </Link>
+
+            {/* Profile dropdown */}
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-1.5 h-8 pl-1 pr-2 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                  <User className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <ChevronDown className="h-3 w-3" />
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border bg-card shadow-xl py-1.5 z-50">
+                  {user && (
+                    <div className="px-3 py-2 border-b border-border mb-1">
+                      <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
