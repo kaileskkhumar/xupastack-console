@@ -103,11 +103,11 @@ const ConsoleNew = () => {
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-primary/15 text-primary">Recommended</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      Privacy-first. Deploys to your Cloudflare account as a Worker. You control the data plane — no third-party in the request path.
+                      Deploy into your Cloudflare account. You control the data plane — no third-party infrastructure in the request path.
                     </p>
                     <div className="flex items-center gap-1.5 mt-2">
                       <Shield className="h-3 w-3 text-primary" />
-                      <span className="text-[11px] text-muted-foreground">Best for production &amp; sensitive apps</span>
+                      <span className="text-[11px] text-muted-foreground">Recommended for production</span>
                     </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${mode === "self-hosted" ? "border-primary" : "border-border"}`}>
@@ -132,9 +132,9 @@ const ConsoleNew = () => {
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-foreground">Managed</p>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      Instant endpoint, zero setup. Different trust model: a third-party gateway sits in the request path.
+                      Instant endpoint. Different trust model: a third-party gateway sits in the request path.
                     </p>
-                    <span className="text-[11px] text-muted-foreground mt-2 inline-block">Best for prototypes &amp; emergencies</span>
+                    <span className="text-[11px] text-muted-foreground mt-2 inline-block">Best for prototyping &amp; quick unblocking</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${mode === "managed" ? "border-primary" : "border-border"}`}>
                     {mode === "managed" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}

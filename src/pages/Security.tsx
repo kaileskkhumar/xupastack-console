@@ -74,6 +74,44 @@ const Security = () => (
 
         <AnimatedSection delay={0.2}>
           <div>
+            <h2 className="text-xl font-bold text-foreground mb-4">Comparison</h2>
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              A factual look at the trade-offs between hosting models.
+            </p>
+            <div className="surface-elevated rounded-xl overflow-hidden mb-8">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    <th className="text-left p-4 font-medium text-muted-foreground"></th>
+                    <th className="p-4 font-semibold text-foreground text-center">Hosted gateway</th>
+                    <th className="p-4 font-semibold text-foreground text-center">Self-hosted gateway</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {[
+                    { label: "Who controls the data plane?", hosted: "Gateway provider", self: "You" },
+                    { label: "Third party in request path?", hosted: "Yes", self: "No" },
+                    { label: "TLS terminates at", hosted: "Provider's infrastructure", self: "Your Cloudflare account" },
+                    { label: "Logging policy", hosted: "Trust provider's policy", self: "You define it" },
+                    { label: "Setup time", hosted: "Seconds", self: "~5 minutes" },
+                    { label: "Cloudflare account required?", hosted: "No", self: "Yes (free tier works)" },
+                    { label: "Cost", hosted: "Free", self: "Free" },
+                    { label: "Audit the code?", hosted: "Depends on provider", self: "Yes — it's your Worker" },
+                  ].map((row, i, arr) => (
+                    <tr key={row.label} className={i < arr.length - 1 ? "border-b border-border/30" : ""}>
+                      <td className="p-4 text-foreground font-medium">{row.label}</td>
+                      <td className="p-4 text-center text-muted-foreground">{row.hosted}</td>
+                      <td className="p-4 text-center text-muted-foreground">{row.self}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.25}>
+          <div>
             <h2 className="text-xl font-bold text-foreground mb-4">Admin token protection</h2>
             <p className="text-muted-foreground leading-relaxed mb-3">
               Self-hosted deployments use an admin token to protect the dashboard and configuration endpoints. This token is set during deployment and should be rotated regularly.
@@ -84,7 +122,7 @@ const Security = () => (
           </div>
         </AnimatedSection>
 
-        <AnimatedSection delay={0.25}>
+        <AnimatedSection delay={0.3}>
           <div>
             <h2 className="text-xl font-bold text-foreground mb-4">Best practices checklist</h2>
             <div className="surface-elevated rounded-xl p-6">

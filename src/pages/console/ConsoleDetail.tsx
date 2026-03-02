@@ -103,6 +103,25 @@ const ConsoleDetail = () => {
           </div>
         )}
 
+        {/* Managed mode callout */}
+        {gw.mode === "managed" && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 mb-6 flex items-start gap-3">
+            <Server className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-foreground font-medium">Consider self-hosted mode</p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                For maximum privacy and control, deploy into your own Cloudflare account. Self-hosted mode is free and keeps your data plane under your control.
+              </p>
+              <Link
+                to="/app/new"
+                className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline mt-2"
+              >
+                Create a self-hosted gateway →
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Integration snippet */}
         <div className="mb-8">
           <h3 className="text-sm font-semibold text-foreground mb-3">Quick integration</h3>
