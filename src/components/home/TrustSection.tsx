@@ -14,10 +14,10 @@ const rows = [
 ];
 
 const TrustSection = () => (
-  <section className="py-20 md:py-28 bg-secondary/30">
+  <section className="py-24 md:py-32 relative">
     <div className="section-container">
-      <AnimatedSection className="max-w-3xl mx-auto text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+      <AnimatedSection className="max-w-3xl mx-auto text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
           Security &amp; privacy — the honest version
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed mb-3">
@@ -29,10 +29,10 @@ const TrustSection = () => (
       </AnimatedSection>
 
       <AnimatedSection delay={0.15} className="max-w-2xl mx-auto">
-        <div className="surface-elevated rounded-xl overflow-hidden">
+        <div className="glass-card overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b border-border/50">
                 <th className="text-left p-4 font-medium text-muted-foreground"></th>
                 <th className="p-4 font-semibold text-foreground text-center">Self-hosted</th>
                 <th className="p-4 font-semibold text-foreground text-center">Managed</th>
@@ -40,13 +40,26 @@ const TrustSection = () => (
             </thead>
             <tbody>
               {rows.map((row, i) => (
-                <tr key={row.label} className={i < rows.length - 1 ? "border-b border-border" : ""}>
+                <tr
+                  key={row.label}
+                  className={`transition-colors hover:bg-primary/[0.03] ${
+                    i < rows.length - 1 ? "border-b border-border/30" : ""
+                  }`}
+                >
                   <td className="p-4 text-foreground font-medium">{row.label}</td>
                   <td className="p-4 text-center">
-                    {row.selfHost ? <Check className="h-4 w-4 text-accent mx-auto" /> : <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />}
+                    {row.selfHost ? (
+                      <Check className="h-4 w-4 text-primary mx-auto" />
+                    ) : (
+                      <X className="h-4 w-4 text-muted-foreground/30 mx-auto" />
+                    )}
                   </td>
                   <td className="p-4 text-center">
-                    {row.managed ? <Check className="h-4 w-4 text-accent mx-auto" /> : <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />}
+                    {row.managed ? (
+                      <Check className="h-4 w-4 text-primary mx-auto" />
+                    ) : (
+                      <X className="h-4 w-4 text-muted-foreground/30 mx-auto" />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -56,7 +69,7 @@ const TrustSection = () => (
       </AnimatedSection>
 
       <AnimatedSection delay={0.25} className="text-center mt-8">
-        <Link to="/security" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+        <Link to="/security" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline transition-colors">
           Read the full security model <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </AnimatedSection>

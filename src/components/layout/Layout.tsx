@@ -3,7 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 const Layout = ({ children }: { children: ReactNode }) => (
-  <div className="min-h-screen flex flex-col">
+  <div className="min-h-screen flex flex-col grain-overlay">
     <Header />
     <main className="flex-1">{children}</main>
     <Footer />
