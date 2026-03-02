@@ -35,7 +35,7 @@ const ConsoleDetail = () => {
   };
 
   const getSnippet = (stack: string) => {
-    const url = gw?.gatewayUrl || "https://your-gateway.xupastack.dev";
+    const url = gw?.gatewayUrl || "https://your-slug.gw.xupastack.com";
     const snippets: Record<string, string> = {
       nextjs: `// .env.local\nNEXT_PUBLIC_SUPABASE_URL=${url}`,
       vite: `// .env\nVITE_SUPABASE_URL=${url}`,
