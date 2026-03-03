@@ -33,7 +33,7 @@ const fade = {
 const FixISP = () => {
   const { isp } = useParams<{ isp: string }>();
   const data = isp ? ISP_DATA[isp] : undefined;
-  const [activeStack, setActiveStack] = useState("lovable");
+  const [activeStack, setActiveStack] = useState("supabase-js");
 
   if (!data) return <NotFound />;
 
