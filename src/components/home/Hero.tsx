@@ -91,7 +91,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-10 text-balance"
           >
-            XupaStack routes your Supabase traffic through Cloudflare — not blocked on Jio, Airtel, or ACT Fibernet. Works with every Supabase SDK. Free to start.
+            XupaStack is a free Cloudflare proxy that makes your Supabase app work in India and anywhere else it's restricted.
           </motion.p>
 
           <motion.div
@@ -104,16 +104,15 @@ const Hero = () => {
               to="/app/new"
               className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]"
             >
-              Fix it now — it's free
+              Fix My App — Free
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <Link
-              to="/app/new"
+            <a
+              href="#how-it-works"
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border/50 bg-card/50 backdrop-blur-xl font-semibold text-sm text-foreground hover:bg-secondary/50 transition-all duration-200"
             >
-              <Zap className="h-4 w-4" />
-              Use managed gateway (fastest)
-            </Link>
+              How it works ↓
+            </a>
           </motion.div>
 
           {/* Only-change callout */}
