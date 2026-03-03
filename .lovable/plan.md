@@ -1,106 +1,48 @@
 
 
-## Premium Redesign: Dark-First, $100M Developer Tool Aesthetic
+## Plan: Remove Mock Data and Make API Client Production-Ready
 
-### Current Problems
-- Light theme default feels generic and "template-y"
-- Flat cards with no depth or visual drama
-- No hero visual element (Reflect has a dramatic glowing black hole)
-- Color palette too scattered (blue primary + green accent mixing)
-- Generic spacing, no visual rhythm
-- Logo is just a letter in a box
-- No ambient glow effects, grain textures, or glassmorphism
+### What changes
 
-### Design Direction (Inspired by Reflect.app)
-- **Dark-first**: Deep navy/charcoal background (#0A0A0F range), dark theme as default
-- **Monochromatic + one accent**: Primary purple/violet glow (like Reflect), no green accent mixing
-- **Ambient glow effects**: Radial gradient glows behind hero, cards, and sections
-- **Glassmorphism nav**: Semi-transparent header with backdrop blur
-- **Subtle grain texture**: CSS noise overlay for depth
-- **Premium typography**: Larger hero text, more letter-spacing control, thinner body weight
-- **SVG Logo**: A custom stacked/layered "X" mark with glow — not a plain square
+The app currently has a full mock data fallback baked into the API client. Every API method catches errors and falls back to an in-memory `mockStore` seeded with 4 fake gateways. For production, we need to remove all of this so the app talks exclusively to `https://api.xupastack.com`.
 
-### Color System Overhaul
-- **Dark (default)**: Background `#09090B`, cards `#111114`, borders `#1a1a22`
-- **Primary**: Purple/violet `hsl(265, 80%, 60%)` with glow variants
-- **Accent**: Kept minimal — soft cyan or just lighter purple for contrast
-- **Light (toggle)**: Clean white `#FAFAFA`, subtle gray cards
-- No green. Single accent color family for professionalism.
+### Files to change
 
-### Implementation Plan
+**1. `src/data/mock-gateways.ts`** — Keep the TypeScript types (`Gateway`, `GatewayMode`, `GatewayStatus`), delete the `MOCK_GATEWAYS` array. Rename file to `src/data/gateway-types.ts` for clarity.
 
-**1. Theme & Color System (`src/index.css`, `tailwind.config.ts`, `src/App.tsx`)**
-- Swap default theme to `"dark"` in ThemeProvider
-- Redesign CSS variables: dark palette as `:root`, light as `.light` class
-- Add CSS utilities: `.glow`, `.grain-overlay`, `.glass-card`
-- Add subtle noise/grain texture as a pseudo-element on body
+**2. `src/lib/api-client.ts`** — Remove mock fallback logic entirely:
+- Remove `MOCK_GATEWAYS` import, `USE_MOCK` flag, `delay()` helper, and `mockStore`
+- Remove the `if (USE_MOCK) throw new Error("mock")` guard in `request()`
+- Strip all `catch` blocks that return mock data — let errors propagate naturally
+- Each method becomes a straightforward `request()` call
 
-**2. Logo Component (`src/components/Logo.tsx`)**
-- Create an SVG logo: stylized "X" with layered strokes and a subtle glow
-- Use in Header and Footer
-- Monochrome, works on both dark and light
+**3. Update imports across consumers** — Change `@/data/mock-gateways` → `@/data/gateway-types` in:
+- `src/components/console/StatusBadge.tsx`
+- `src/pages/console/ConsoleDashboard.tsx`
+- `src/lib/api-client.ts`
 
-**3. Header Redesign (`src/components/layout/Header.tsx`)**
-- Glassmorphic: `bg-background/60 backdrop-blur-2xl` with very subtle border
-- Centered nav pill (like Reflect's rounded nav bar in center)
-- Logo left, CTA + theme toggle right
-- Mobile: slide-in sheet instead of dropdown
+### Technical detail
 
-**4. Hero Overhaul (`src/components/home/Hero.tsx`)**
-- Large ambient purple glow orb behind the headline (radial gradient)
-- Bigger, bolder headline with `font-extrabold text-5xl md:text-7xl`
-- Subtle animated gradient on the accent text (shimmer effect)
-- Code block below hero gets a glowing border treatment
-- Staggered entrance animations
+The cleaned `api-client.ts` will look like:
 
-**5. ChooseFix Section (`src/components/home/ChooseFix.tsx`)**
-- Cards with subtle border glow on hover (purple tint)
-- Glass-card style with `bg-card/50 backdrop-blur` and thin gradient border
-- Hover lift animation with shadow bloom
+```text
+request()  →  fetch(BASE + path)  →  return JSON or throw
 
-**6. HowItWorks Section (`src/components/home/HowItWorks.tsx`)**
-- Vertical timeline with a glowing line connector
-- Step numbers with purple glow rings
-- Code blocks with refined dark styling
+api.listApps()      →  GET    /apps
+api.createApp()     →  POST   /apps
+api.getApp(id)      →  GET    /apps/:id
+api.updateApp(id)   →  PATCH  /apps/:id
+api.deactivateApp() →  POST   /apps/:id/deactivate
+api.deleteApp(id)   →  DELETE /apps/:id
+api.getSignedConfigUrl() → GET /apps/:id/config.json
+api.verifyApp(id)   →  POST   /apps/:id/verify
+```
 
-**7. FeaturesGrid (`src/components/home/FeaturesGrid.tsx`)**
-- Bento-grid style layout (varying card sizes for visual interest)
-- Icons with subtle glow halos
-- Cards with gradient borders on hover
+`BASE` will default to `https://api.xupastack.com` if `VITE_API_BASE` is not set, matching how `AuthContext.tsx` already works. Error handling stays in the React Query hooks (`use-apps.ts`) via `onError` callbacks — no changes needed there.
 
-**8. TrustSection (`src/components/home/TrustSection.tsx`)**
-- Comparison table with refined dark styling
-- Check marks in purple instead of green
-- Subtle row hover highlights
-
-**9. DonateSection (`src/components/home/DonateSection.tsx`)**
-- Full-width gradient banner section
-- Ambient glow behind CTA
-
-**10. Footer (`src/components/layout/Footer.tsx`)**
-- Minimal dark footer, subtle separators
-- Logo mark repeated
-
-**11. Global Polish**
-- Add CSS grain texture overlay
-- Smooth page transitions
-- Refine AnimatedSection easing curves
-- All code blocks get consistent premium dark treatment
-
-### Files to Modify
-- `src/index.css` — full color system rewrite + new utilities
-- `tailwind.config.ts` — update animation keyframes, add shimmer
-- `src/App.tsx` — change defaultTheme to "dark"
-- `src/components/layout/Header.tsx` — glassmorphic redesign + centered nav
-- `src/components/layout/Footer.tsx` — dark premium footer
-- `src/components/home/Hero.tsx` — dramatic glow hero
-- `src/components/home/ChooseFix.tsx` — glass cards
-- `src/components/home/HowItWorks.tsx` — glowing timeline
-- `src/components/home/FeaturesGrid.tsx` — bento grid
-- `src/components/home/TrustSection.tsx` — refined table
-- `src/components/home/DonateSection.tsx` — gradient banner
-- `src/components/ThemeToggle.tsx` — minor style update
-
-### Files to Create
-- `src/components/Logo.tsx` — SVG logo component
+### What stays unchanged
+- All console page components (Dashboard, Detail, Settings, New, Deploy, Help)
+- React Query hooks (`use-apps.ts`)
+- Auth context
+- StatusBadge and other UI components (just import path update)
 
