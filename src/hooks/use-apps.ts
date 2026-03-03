@@ -30,11 +30,11 @@ export function useLegalVersions() {
   });
 }
 
-export function useSnippets(id: string) {
+export function useSnippets(id: string, enabled = true) {
   return useQuery<SnippetsResult>({
     queryKey: ["snippets", id],
     queryFn: () => api.getSnippets(id),
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 }
 

@@ -6,6 +6,8 @@ import CodeBlock from "@/components/CodeBlock";
 
 interface IntegrationSnippetsProps {
   appId: string;
+  gatewayUrl?: string | null;
+  mode?: string;
 }
 
 const TAB_LABELS: Record<string, string> = {
@@ -20,9 +22,18 @@ const TAB_LABELS: Record<string, string> = {
   "other": "Other",
 };
 
-const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
-  const { data: raw, isLoading, isError } = useSnippets(appId);
+const IntegrationSnippets = ({ appId, gatewayUrl, mode }: IntegrationSnippetsProps) => {
+  const skipFetch = mode === "selfhost" && !gatewayUrl;
+  const { data: raw, isLoading, isError } = useSnippets(appId, !skipFetch);
   const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  if (skipFetch) {
+    return (
+      <div className="mb-6 rounded-xl border border-border bg-card/30 p-6 text-center">
+        <p className="text-sm text-muted-foreground">Deploy your gateway first to see code snippets.</p>
+      </div>
+    );
+  }
 
   const snippetsMap = raw?.snippets && typeof raw.snippets === "object" ? raw.snippets : {};
   const entries = Object.entries(snippetsMap);

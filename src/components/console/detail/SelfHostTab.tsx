@@ -45,8 +45,12 @@ const SelfHostTab = ({ appId }: SelfHostTabProps) => {
       const result = await api.getSignedConfigUrl(appId);
       setConfig(result);
       startCountdown(result.expiresAt);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to get config");
+    } catch (err: any) {
+      if (err?.name === "AuthError") {
+        setError("Session expired — please log in again.");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to get config");
+      }
     } finally {
       setLoading(false);
     }

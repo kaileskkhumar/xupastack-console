@@ -38,7 +38,7 @@ const DetailHeader = ({ gw }: DetailHeaderProps) => {
             <StatusBadge status={gw.status} />
           </div>
           <p className="text-xs text-muted-foreground">
-            Created {gw.createdAt}
+            Created {new Date(Number(gw.createdAt) * 1000).toLocaleDateString()}
           </p>
           {gw.status === "disabled" && (
             <div className="mt-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2">

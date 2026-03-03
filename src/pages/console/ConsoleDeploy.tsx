@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Check, ArrowRight, ClipboardCopy, ChevronDown } from "lucide-react";
+import { ArrowLeft, Check, ArrowRight, ClipboardCopy, ChevronDown, Loader2, Terminal, Clock, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import Stepper from "@/components/console/Stepper";
 import CodeBlock from "@/components/CodeBlock";
+import CopyButton from "@/components/console/CopyButton";
 import { toast } from "sonner";
+import { api, AuthError } from "@/lib/api-client";
+import { useApp } from "@/hooks/use-apps";
 import {
   STACKS, Stack, CHECKLIST_ITEMS, DOCTOR_SERVICES,
   getEnvSnippet, fixEnvLine, getAllStepsCopyText,
@@ -14,11 +17,60 @@ const STEPS = ["Deploy", "Swap URL", "Auth checklist", "Verify", "Lock down"];
 
 const ConsoleDeploy = () => {
   const { id } = useParams();
+  const { data: gw } = useApp(id);
   const [currentStep, setCurrentStep] = useState(0);
   const [gatewayUrl, setGatewayUrl] = useState("");
   const [stack, setStack] = useState<Stack>("Next.js");
   const [checklist, setChecklist] = useState<boolean[]>(new Array(CHECKLIST_ITEMS.length).fill(false));
   const [envInput, setEnvInput] = useState("");
+
+  // Config fetch state for Step 0
+  const [config, setConfig] = useState<{ configUrl: string; expiresAt: string } | null>(null);
+  const [configLoading, setConfigLoading] = useState(false);
+  const [configError, setConfigError] = useState<string | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Doctor gateway URL for Step 3
+  const [doctorUrl, setDoctorUrl] = useState("");
+
+  const clearTimer = () => {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+  };
+  useEffect(() => () => clearTimer(), []);
+
+  const startCountdown = (expiresAt: string) => {
+    clearTimer();
+    const update = () => {
+      const diff = Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+      setSecondsLeft(diff);
+      if (diff <= 0) { clearTimer(); setConfig(null); }
+    };
+    update();
+    timerRef.current = setInterval(update, 1000);
+  };
+
+  const fetchConfig = async () => {
+    if (!id) return;
+    setConfigLoading(true);
+    setConfigError(null);
+    try {
+      const result = await api.getSignedConfigUrl(id);
+      setConfig(result);
+      startCountdown(result.expiresAt);
+    } catch (err: any) {
+      if (err?.name === "AuthError") {
+        setConfigError("Session expired — please log in again.");
+      } else {
+        setConfigError(err instanceof Error ? err.message : "Failed to generate config");
+      }
+    } finally {
+      setConfigLoading(false);
+    }
+  };
+
+  // Auto-fetch config on mount
+  useEffect(() => { fetchConfig(); }, [id]);
 
   const next = () => setCurrentStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setCurrentStep((s) => Math.max(s - 1, 0));
@@ -32,6 +84,11 @@ const ConsoleDeploy = () => {
   };
 
   const fixedLine = envInput ? fixEnvLine(envInput, gatewayUrl) : null;
+
+  const importCmd = config ? `npx create-xupastack@latest import --import "${config.configUrl}"` : "";
+  const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
+
+  const resolvedDoctorUrl = doctorUrl || gw?.gatewayUrl || "";
 
   return (
     <div className="section-container py-10 max-w-2xl">
@@ -95,9 +152,54 @@ const ConsoleDeploy = () => {
         <Stepper steps={STEPS} currentStep={currentStep}>
           {currentStep === 0 && (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">Clone and deploy the XupaStack worker to your Cloudflare account.</p>
-              <CodeBlock code={`npx xupastack init --gateway ${id}`} title="1. Initialize" />
-              <CodeBlock code="npx wrangler deploy" title="2. Deploy to Cloudflare" />
+              <p className="text-sm text-muted-foreground">Generate a signed config and deploy to your Cloudflare account.</p>
+
+              {configLoading && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Generating setup command…
+                </div>
+              )}
+
+              {configError && (
+                <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                  <p className="text-xs text-destructive">{configError}</p>
+                </div>
+              )}
+
+              {config && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2">
+                    <Clock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                    <p className="text-xs text-amber-500 font-medium">
+                      ⚠ This link expires in {formatTime(secondsLeft)}. Run the command now.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2.5 font-mono text-xs">
+                    <Terminal className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span className="flex-1 truncate">{importCmd}</span>
+                    <CopyButton text={importCmd} />
+                  </div>
+
+                  <button
+                    onClick={fetchConfig}
+                    disabled={configLoading}
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <RefreshCw className="h-3 w-3" /> Regenerate
+                  </button>
+                </div>
+              )}
+
+              {!config && !configLoading && !configError && (
+                <button
+                  onClick={fetchConfig}
+                  className="h-9 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+                >
+                  Generate Setup Command →
+                </button>
+              )}
+
               <div className="space-y-2 mt-4">
                 <label className="text-sm font-medium text-foreground">Deployed gateway URL (optional)</label>
                 <input
@@ -129,9 +231,7 @@ const ConsoleDeploy = () => {
                   placeholder="NEXT_PUBLIC_SUPABASE_URL=https://abc.supabase.co"
                   className="w-full h-9 px-3 rounded-lg border border-border bg-background text-foreground text-xs font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
-                {fixedLine && (
-                  <CodeBlock code={fixedLine} title="Corrected" />
-                )}
+                {fixedLine && <CodeBlock code={fixedLine} title="Corrected" />}
               </div>
             </div>
           )}
@@ -159,8 +259,25 @@ const ConsoleDeploy = () => {
           {currentStep === 3 && (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">Run the doctor command to verify all services are accessible through the gateway.</p>
-              <CodeBlock code="npx xupastack doctor" title="Verify gateway" />
-              {/* Doctor success output */}
+
+              {!resolvedDoctorUrl && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Enter your deployed gateway URL</label>
+                  <input
+                    type="text"
+                    value={doctorUrl}
+                    onChange={(e) => setDoctorUrl(e.target.value)}
+                    placeholder="https://your-worker.workers.dev"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+              )}
+
+              <CodeBlock
+                code={`npx create-xupastack@latest doctor --gateway ${resolvedDoctorUrl || "https://your-worker.workers.dev"}`}
+                title="Verify gateway"
+              />
+
               <div className="glass-card p-5">
                 <h4 className="text-sm font-semibold text-foreground mb-3">Expected output</h4>
                 <div className="space-y-1.5 font-mono text-xs">
