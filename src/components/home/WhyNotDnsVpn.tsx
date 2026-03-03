@@ -1,76 +1,78 @@
-import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
-import { Wifi, Smartphone, Users } from "lucide-react";
+import { XCircle, CheckCircle2, ShieldAlert, Wifi, Smartphone, Users } from "lucide-react";
 
 const myths = [
   {
     icon: Wifi,
-    title: "DNS only fixes your machine",
-    desc: "1.1.1.1 or 8.8.8.8 works for you. Your users won't change their DNS.",
+    title: "Changing DNS only fixes your machine",
+    desc: "Custom DNS (1.1.1.1, 8.8.8.8) works for your dev machine. Your end users won't change their DNS — and you can't make them.",
   },
   {
     icon: Smartphone,
-    title: "Mobile apps can't enforce VPN",
-    desc: "App stores won't allow it, and users won't install one for your app.",
+    title: "Mobile apps can't enforce DNS or VPN",
+    desc: "You can't ship a mobile app that requires a VPN. App Store and Play Store won't allow it, and users won't install one.",
   },
   {
     icon: Users,
-    title: "VPN isn't production-grade",
-    desc: "Telling customers to 'use a VPN' is a support ticket, not a solution.",
+    title: "VPN is not a solution for production users",
+    desc: "Telling paying customers to 'use a VPN' is not acceptable. Your app should just work on any network.",
   },
 ];
 
 const WhyNotDnsVpn = () => (
   <section className="py-14 md:py-20 relative">
     <div className="section-container">
-      <div className="max-w-4xl mx-auto">
-        <AnimatedSection className="mb-10">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-destructive/20" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-destructive/80">Common pitfall</span>
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-destructive/20" />
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-2 tracking-tight">
-            Why DNS & VPN aren't real fixes
-          </h2>
-          <p className="text-sm text-muted-foreground text-center max-w-lg mx-auto">
-            They work for you. They don't work for your users.
-          </p>
-        </AnimatedSection>
-
-        <div className="grid md:grid-cols-3 gap-3 mb-8">
-          {myths.map((m, i) => (
-            <AnimatedSection key={m.title} delay={i * 0.06}>
-              <div className="group relative rounded-xl border border-border/40 bg-card/30 p-5 h-full transition-colors duration-300 hover:border-destructive/20">
-                <m.icon className="h-4 w-4 text-destructive/70 mb-3" />
-                <h3 className="text-xs font-bold text-foreground mb-1 tracking-tight">{m.title}</h3>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">{m.desc}</p>
-              </div>
-            </AnimatedSection>
-          ))}
+      <AnimatedSection className="text-center mb-14">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-destructive/30 bg-destructive/10 text-xs font-semibold text-destructive mb-5">
+          <ShieldAlert className="h-3 w-3" />
+          Common Mistake
         </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          Why DNS & VPN aren't real fixes
+        </h2>
+        <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+          They work for you, the developer. They don't work for your users.
+        </p>
+      </AnimatedSection>
 
-        <AnimatedSection delay={0.2}>
-          <div className="grid sm:grid-cols-2 gap-3 max-w-xl mx-auto">
-            <div className="rounded-xl border border-destructive/15 bg-destructive/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-destructive/70 mb-2.5">Per-device workaround</p>
-              <ul className="space-y-1 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1.5"><span className="text-destructive/60">✗</span> Change DNS on every device</li>
-                <li className="flex items-center gap-1.5"><span className="text-destructive/60">✗</span> Ask users to install a VPN</li>
-                <li className="flex items-center gap-1.5"><span className="text-destructive/60">✗</span> Wait for ISPs to fix it</li>
-              </ul>
+      <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto mb-12">
+        {myths.map((m, i) => (
+          <AnimatedSection key={m.title} delay={i * 0.08}>
+            <div className="glass-card p-6 h-full">
+              <div className="h-9 w-9 rounded-lg bg-destructive/10 flex items-center justify-center mb-4">
+                <m.icon className="h-4 w-4 text-destructive" />
+              </div>
+              <h3 className="text-sm font-semibold text-foreground mb-2">{m.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{m.desc}</p>
             </div>
-            <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-500/70 mb-2.5">Infra-level fix</p>
-              <ul className="space-y-1 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1.5"><span className="text-emerald-500/80">✓</span> One URL change in codebase</li>
-                <li className="flex items-center gap-1.5"><span className="text-emerald-500/80">✓</span> All users fixed instantly</li>
-                <li className="flex items-center gap-1.5"><span className="text-emerald-500/80">✓</span> No user action required</li>
-              </ul>
-            </div>
-          </div>
-        </AnimatedSection>
+          </AnimatedSection>
+        ))}
       </div>
+
+      <AnimatedSection delay={0.3}>
+        <div className="max-w-2xl mx-auto grid sm:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-5">
+            <p className="text-xs font-bold text-destructive mb-3 flex items-center gap-1.5">
+              <XCircle className="h-3.5 w-3.5" /> Per-device workarounds
+            </p>
+            <ul className="space-y-1.5 text-xs text-muted-foreground">
+              <li>✗ Change DNS on every device</li>
+              <li>✗ Ask users to install a VPN</li>
+              <li>✗ Wait for ISPs to fix it</li>
+            </ul>
+          </div>
+          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+            <p className="text-xs font-bold text-emerald-500 mb-3 flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5" /> Infra-level fix (XupaStack)
+            </p>
+            <ul className="space-y-1.5 text-xs text-muted-foreground">
+              <li>✓ One URL change in your codebase</li>
+              <li>✓ All users fixed instantly</li>
+              <li>✓ No user action required</li>
+            </ul>
+          </div>
+        </div>
+      </AnimatedSection>
     </div>
   </section>
 );

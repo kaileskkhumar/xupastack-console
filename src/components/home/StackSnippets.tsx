@@ -55,41 +55,38 @@ const StackSnippets = () => {
   return (
     <section className="py-14 md:py-20">
       <div className="section-container">
-        <AnimatedSection className="text-center mb-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Integration</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 tracking-tight">Works with any stack</h2>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            One URL swap. Keys, schema, and RLS policies stay exactly the same.
+        <AnimatedSection className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Works with any stack</h2>
+          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+            One URL swap. Your keys, schema, and RLS policies stay exactly the same.
           </p>
         </AnimatedSection>
 
-        <AnimatedSection delay={0.08} className="max-w-xl mx-auto">
+        <AnimatedSection delay={0.1} className="max-w-2xl mx-auto">
           {/* Tabs */}
-          <div className="flex flex-wrap gap-1 mb-4 justify-center">
+          <div className="flex flex-wrap gap-1.5 mb-5 justify-center">
             {STACKS.map((s) => (
               <button
                 key={s.value}
                 onClick={() => setActive(s.value)}
-                className={`relative px-3 py-1.5 rounded-md text-[11px] font-medium transition-all duration-200 ${
-                  active === s.value
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground/80"
-                }`}
+                className="relative px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200"
               >
                 {active === s.value && (
                   <motion.div
                     layoutId="stack-tab"
-                    className="absolute inset-0 rounded-md bg-secondary border border-border/60"
+                    className="absolute inset-0 rounded-lg bg-primary/15 border border-primary/30"
                     transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                   />
                 )}
-                <span className="relative z-10">{s.label}</span>
+                <span className={`relative z-10 ${active === s.value ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+                  {s.label}
+                </span>
               </button>
             ))}
           </div>
 
           {/* Snippet */}
-          <div className="rounded-xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden">
+          <div className="glass-card p-5">
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.value}
@@ -97,10 +94,9 @@ const StackSnippets = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.15 }}
-                className="p-4"
               >
                 <CodeBlock code={current.code} />
-                <p className="text-[10px] text-muted-foreground/70 mt-2.5">{current.hint}</p>
+                <p className="text-[11px] text-muted-foreground mt-3">{current.hint}</p>
               </motion.div>
             </AnimatePresence>
           </div>
