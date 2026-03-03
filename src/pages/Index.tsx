@@ -4,8 +4,8 @@ import BlockTest from "@/components/home/BlockTest";
 import ChooseFix from "@/components/home/ChooseFix";
 import HowItWorks from "@/components/home/HowItWorks";
 import StackSnippets from "@/components/home/StackSnippets";
-import WhyNotDnsVpn from "@/components/home/WhyNotDnsVpn";
 import FeaturesGrid from "@/components/home/FeaturesGrid";
+import WhyNotDnsVpn from "@/components/home/WhyNotDnsVpn";
 import TrustSection from "@/components/home/TrustSection";
 import HomeFAQ from "@/components/home/HomeFAQ";
 import DonateSection from "@/components/home/DonateSection";
@@ -17,8 +17,8 @@ const Index = () => (
     <ChooseFix />
     <HowItWorks />
     <StackSnippets />
-    <WhyNotDnsVpn />
     <FeaturesGrid />
+    <WhyNotDnsVpn />
     <TrustSection />
     <HomeFAQ />
     <DonateSection />

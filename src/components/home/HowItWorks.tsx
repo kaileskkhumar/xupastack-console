@@ -23,28 +23,29 @@ const steps = [
 ];
 
 const HowItWorks = () => (
-  <section className="py-24 md:py-32 relative">
+  <section className="py-14 md:py-20 relative">
     <div className="section-container">
-      <AnimatedSection className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">How it works</h2>
-        <p className="text-muted-foreground text-lg">Three steps. No magic, no lock-in.</p>
+      <AnimatedSection className="text-center mb-10">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Setup</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 tracking-tight">How it works</h2>
+        <p className="text-muted-foreground text-sm">Three steps. No magic, no lock-in.</p>
       </AnimatedSection>
 
-      <div className="max-w-2xl mx-auto space-y-0">
+      <div className="max-w-xl mx-auto space-y-0">
         {steps.map((step, i) => (
-          <AnimatedSection key={step.number} delay={i * 0.12}>
-            <div className="flex gap-6">
+          <AnimatedSection key={step.number} delay={i * 0.1}>
+            <div className="flex gap-4">
               <div className="flex flex-col items-center">
-                <div className="h-11 w-11 rounded-full border-2 border-primary/50 bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0 shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)]">
+                <div className="h-8 w-8 rounded-full border border-primary/40 bg-primary/[0.08] flex items-center justify-center text-[11px] font-bold text-primary shrink-0">
                   {step.number}
                 </div>
                 {i < steps.length - 1 && (
-                  <div className="w-px flex-1 bg-gradient-to-b from-primary/40 to-primary/5 my-2" />
+                  <div className="w-px flex-1 bg-gradient-to-b from-primary/30 to-transparent my-1.5" />
                 )}
               </div>
-              <div className="pb-12 flex-1 min-w-0">
-                <h3 className="text-lg font-semibold text-foreground mb-1.5">{step.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{step.description}</p>
+              <div className="pb-8 flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-foreground mb-0.5">{step.title}</h3>
+                <p className="text-xs text-muted-foreground mb-3">{step.description}</p>
                 <CodeBlock code={step.code} />
               </div>
             </div>

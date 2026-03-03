@@ -11,7 +11,7 @@ const features = [
   {
     icon: Lock,
     title: "OAuth-safe redirects",
-    description: "Prevents auth flows bouncing back to blocked domains. Google, GitHub, Apple sign-in just work.",
+    description: "Auth flows won't bounce back to blocked domains. Google, GitHub, Apple sign-in just work.",
     span: "",
   },
   {
@@ -29,7 +29,7 @@ const features = [
   {
     icon: LayoutDashboard,
     title: "Self-hosted mini dashboard",
-    description: "Manage your gateway, view logs, and configure settings from a local dashboard.",
+    description: "Manage your gateway, view logs, and configure settings locally.",
     span: "",
   },
   {
@@ -41,25 +41,25 @@ const features = [
 ];
 
 const FeaturesGrid = () => (
-  <section className="py-24 md:py-32 relative">
-    {/* Background glow */}
-    <div className="glow-orb absolute w-[400px] h-[400px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10" />
+  <section className="py-14 md:py-20 relative">
+    <div className="glow-orb absolute w-[400px] h-[400px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.06]" />
 
     <div className="section-container relative z-10">
-      <AnimatedSection className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Everything you need</h2>
-        <p className="text-muted-foreground text-lg max-w-xl mx-auto">Full Supabase compatibility with production-grade controls.</p>
+      <AnimatedSection className="text-center mb-10">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Features</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 tracking-tight">Everything you need</h2>
+        <p className="text-muted-foreground text-sm max-w-md mx-auto">Full Supabase compatibility with production-grade controls.</p>
       </AnimatedSection>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
         {features.map((feat, i) => (
-          <AnimatedSection key={feat.title} delay={i * 0.06} className={feat.span}>
-            <div className="glass-card p-6 h-full transition-all duration-300 hover:-translate-y-0.5 group">
-              <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mb-4 shadow-[0_0_16px_-4px_hsl(var(--primary)/0.3)] group-hover:shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)] transition-shadow duration-300">
-                <feat.icon className="h-4.5 w-4.5 text-primary" />
+          <AnimatedSection key={feat.title} delay={i * 0.05} className={feat.span}>
+            <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 h-full transition-all duration-300 hover:border-primary/20 group">
+              <div className="h-7 w-7 rounded-md bg-primary/[0.08] flex items-center justify-center mb-3 transition-shadow duration-300 group-hover:shadow-[0_0_16px_-4px_hsl(var(--primary)/0.3)]">
+                <feat.icon className="h-3.5 w-3.5 text-primary" />
               </div>
-              <h3 className="text-sm font-semibold text-foreground mb-1.5">{feat.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{feat.description}</p>
+              <h3 className="text-xs font-bold text-foreground mb-1">{feat.title}</h3>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">{feat.description}</p>
             </div>
           </AnimatedSection>
         ))}

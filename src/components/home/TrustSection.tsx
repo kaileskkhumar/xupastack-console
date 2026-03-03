@@ -14,52 +14,42 @@ const rows = [
 ];
 
 const TrustSection = () => (
-  <section className="py-24 md:py-32 relative">
+  <section className="py-14 md:py-20 relative">
     <div className="section-container">
-      <AnimatedSection className="max-w-3xl mx-auto text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
-          Security &amp; privacy — the honest version
+      <AnimatedSection className="max-w-2xl mx-auto text-center mb-8">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Trust model</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 tracking-tight">
+          Security — the honest version
         </h2>
-        <p className="text-muted-foreground text-lg leading-relaxed mb-3">
-          Any hosted gateway sits in the request path. Even with good intentions, you're trusting their logging policy and operational security.
-        </p>
-        <p className="text-muted-foreground text-lg leading-relaxed">
-          <strong className="text-foreground">Self-hosted mode avoids this</strong>: XupaStack deploys into your Cloudflare account, under your domain. You keep control.
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Any hosted gateway sits in the request path. <strong className="text-foreground">Self-hosted mode avoids this</strong> — it deploys into your Cloudflare account, under your domain.
         </p>
       </AnimatedSection>
 
-      <AnimatedSection delay={0.15} className="max-w-2xl mx-auto">
-        <div className="glass-card overflow-hidden">
-          <table className="w-full text-sm">
+      <AnimatedSection delay={0.1} className="max-w-xl mx-auto">
+        <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden">
+          <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-border/50">
-                <th className="text-left p-4 font-medium text-muted-foreground"></th>
-                <th className="p-4 font-semibold text-foreground text-center">Self-hosted</th>
-                <th className="p-4 font-semibold text-foreground text-center">Managed</th>
+              <tr className="border-b border-border/30">
+                <th className="text-left p-3 font-medium text-muted-foreground"></th>
+                <th className="p-3 font-bold text-foreground text-center text-[11px]">Self-hosted</th>
+                <th className="p-3 font-bold text-foreground text-center text-[11px]">Managed</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row, i) => (
                 <tr
                   key={row.label}
-                  className={`transition-colors hover:bg-primary/[0.03] ${
-                    i < rows.length - 1 ? "border-b border-border/30" : ""
+                  className={`transition-colors hover:bg-primary/[0.02] ${
+                    i < rows.length - 1 ? "border-b border-border/20" : ""
                   }`}
                 >
-                  <td className="p-4 text-foreground font-medium">{row.label}</td>
-                  <td className="p-4 text-center">
-                    {row.selfHost ? (
-                      <Check className="h-4 w-4 text-primary mx-auto" />
-                    ) : (
-                      <X className="h-4 w-4 text-muted-foreground/30 mx-auto" />
-                    )}
+                  <td className="p-3 text-foreground/90 font-medium">{row.label}</td>
+                  <td className="p-3 text-center">
+                    {row.selfHost ? <Check className="h-3.5 w-3.5 text-primary mx-auto" /> : <X className="h-3.5 w-3.5 text-muted-foreground/20 mx-auto" />}
                   </td>
-                  <td className="p-4 text-center">
-                    {row.managed ? (
-                      <Check className="h-4 w-4 text-primary mx-auto" />
-                    ) : (
-                      <X className="h-4 w-4 text-muted-foreground/30 mx-auto" />
-                    )}
+                  <td className="p-3 text-center">
+                    {row.managed ? <Check className="h-3.5 w-3.5 text-primary mx-auto" /> : <X className="h-3.5 w-3.5 text-muted-foreground/20 mx-auto" />}
                   </td>
                 </tr>
               ))}
@@ -68,9 +58,9 @@ const TrustSection = () => (
         </div>
       </AnimatedSection>
 
-      <AnimatedSection delay={0.25} className="text-center mt-8">
-        <Link to="/security" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline transition-colors">
-          Read the full security model <ArrowRight className="h-3.5 w-3.5" />
+      <AnimatedSection delay={0.2} className="text-center mt-5">
+        <Link to="/security" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors">
+          Read full security model <ArrowRight className="h-3 w-3" />
         </Link>
       </AnimatedSection>
     </div>
