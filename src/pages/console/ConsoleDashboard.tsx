@@ -11,11 +11,10 @@ type FilterKey = "all" | GatewayMode | GatewayStatus;
 
 const filters: { label: string; value: FilterKey }[] = [
   { label: "All", value: "all" },
-  { label: "Self-hosted", value: "self-hosted" },
+  { label: "Self-host", value: "selfhost" },
   { label: "Managed", value: "managed" },
-  { label: "Needs setup", value: "needs-setup" },
   { label: "Active", value: "active" },
-  { label: "Paused", value: "paused" },
+  { label: "Disabled", value: "disabled" },
 ];
 
 const ConsoleDashboard = () => {
@@ -24,7 +23,7 @@ const ConsoleDashboard = () => {
 
   const filtered = gateways.filter((gw) => {
     if (filter === "all") return true;
-    if (filter === "self-hosted" || filter === "managed") return gw.mode === filter;
+    if (filter === "selfhost" || filter === "managed") return gw.mode === filter;
     return gw.status === filter;
   });
 
@@ -101,67 +100,32 @@ const ConsoleDashboard = () => {
                 </Link>
               </div>
             ) : (
-              <div className="glass-card overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border/50">
-                        <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Name</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3 hidden md:table-cell">Mode</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">Status</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3 hidden lg:table-cell">Gateway URL</th>
-                        <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3 hidden lg:table-cell">Last check</th>
-                        <th className="text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3 hidden md:table-cell">Requests</th>
-                        <th className="px-4 py-3"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.map((gw) => (
-                        <tr key={gw.id} className="border-b border-border/30 last:border-0 hover:bg-secondary/30 transition-colors">
-                          <td className="px-4 py-3.5">
-                            <Link to={`/app/${gw.id}`} className="font-medium text-foreground hover:text-primary transition-colors">
-                              {gw.name}
-                            </Link>
-                            <p className="text-xs text-muted-foreground mt-0.5 md:hidden">
-                              {gw.mode === "self-hosted" ? "Self-hosted" : "Managed"}
-                            </p>
-                          </td>
-                          <td className="px-4 py-3.5 hidden md:table-cell">
-                            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                              {gw.mode === "self-hosted" ? <Server className="h-3 w-3" /> : <Cloud className="h-3 w-3" />}
-                              {gw.mode === "self-hosted" ? "Self-hosted" : "Managed"}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3.5">
-                            <StatusBadge status={gw.status} />
-                          </td>
-                          <td className="px-4 py-3.5 hidden lg:table-cell">
-                            {gw.gatewayUrl ? (
-                              <span className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
-                                <span className="truncate max-w-[200px]">{gw.gatewayUrl}</span>
-                                <CopyButton text={gw.gatewayUrl} />
-                              </span>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">—</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3.5 hidden lg:table-cell text-xs text-muted-foreground">{gw.lastCheck}</td>
-                          <td className="px-4 py-3.5 hidden md:table-cell text-right text-xs text-muted-foreground font-mono">
-                            {gw.requestsMonth.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3.5 text-right">
-                            <Link
-                              to={`/app/${gw.id}`}
-                              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="space-y-3">
+                {filtered.map((gw) => (
+                  <Link
+                    key={gw.id}
+                    to={`/app/${gw.id}`}
+                    className="glass-card p-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:bg-secondary/30 transition-colors block"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium text-foreground truncate">{gw.name}</p>
+                        <StatusBadge status={gw.status} />
+                        <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                          {gw.mode === "selfhost" ? <Server className="h-3 w-3" /> : <Cloud className="h-3 w-3" />}
+                          {gw.mode === "selfhost" ? "Self-host" : "Managed"}
+                        </span>
+                      </div>
+                      {gw.gatewayUrl && (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded" onClick={(e) => e.preventDefault()}>
+                          <span className="truncate max-w-[250px]">{gw.gatewayUrl}</span>
+                          <CopyButton text={gw.gatewayUrl} />
+                        </span>
+                      )}
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </Link>
+                ))}
               </div>
             )}
           </>

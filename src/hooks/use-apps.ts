@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, CreateAppPayload, UpdateAppPayload, LegalVersions, Snippet, DiagnosticsResult } from "@/lib/api-client";
+import { api, CreateAppPayload, UpdateAppPayload, LegalVersions, SnippetsResult, DiagnosticsResult } from "@/lib/api-client";
 import { toast } from "sonner";
 
 const APPS_KEY = ["apps"] as const;
@@ -26,12 +26,12 @@ export function useLegalVersions() {
   return useQuery<LegalVersions>({
     queryKey: ["legal-versions"],
     queryFn: () => api.getLegalVersions(),
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 60,
   });
 }
 
 export function useSnippets(id: string) {
-  return useQuery<Snippet[]>({
+  return useQuery<SnippetsResult>({
     queryKey: ["snippets", id],
     queryFn: () => api.getSnippets(id),
     enabled: !!id,
@@ -39,10 +39,8 @@ export function useSnippets(id: string) {
 }
 
 export function useDiagnostics(id: string) {
-  return useQuery<DiagnosticsResult>({
-    queryKey: ["diagnostics", id],
-    queryFn: () => api.getDiagnostics(id),
-    enabled: false, // on-demand only
+  return useMutation({
+    mutationFn: () => api.getDiagnostics(id),
   });
 }
 
@@ -79,10 +77,25 @@ export function useDeactivateApp(id: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: () => api.deactivateApp(id),
-    onSuccess: (gw) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: appKey(id) });
       qc.invalidateQueries({ queryKey: APPS_KEY });
-      toast.success(gw.status === "paused" ? "Gateway deactivated" : "Gateway reactivated");
+      toast.success("Gateway deactivated");
+    },
+    onError: (err: Error) => {
+      toast.error("Action failed", { description: err.message });
+    },
+  });
+}
+
+export function useActivateApp(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.activateApp(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: appKey(id) });
+      qc.invalidateQueries({ queryKey: APPS_KEY });
+      toast.success("Gateway activated");
     },
     onError: (err: Error) => {
       toast.error("Action failed", { description: err.message });
