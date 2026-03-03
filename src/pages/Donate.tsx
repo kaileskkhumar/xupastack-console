@@ -5,8 +5,8 @@ import bmcQr from "@/assets/bmc-qr.png";
 
 const BMC_LINK = "https://buymeacoffee.com/kailesk";
 
-const Donate = () => (
-  <Layout>
+const Donate = () =>
+<Layout>
     <div className="section-container py-16 md:py-24 max-w-2xl">
       <AnimatedSection className="text-center space-y-6">
         <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 mb-2">
@@ -17,9 +17,9 @@ const Donate = () => (
           <p>
             I'm <span className="font-semibold text-foreground">Kailesk</span> — a solo developer who built XupaStack to solve a real problem: Supabase getting blocked in production.
           </p>
-          <p>
-            There's no company behind this. No investors. No premium tier. Just one person paying for servers, writing docs at midnight, and pushing security patches on weekends.
-          </p>
+          <p>There's no company behind this. No investors. No premium tier. Just one person paying for servers and writing code at midnight so that your project stays live in India
+
+        </p>
           <p>
             If XupaStack kept your app running when nothing else worked, a small donation means I can keep it <span className="font-semibold text-foreground">free and maintained for everyone</span>.
           </p>
@@ -33,11 +33,11 @@ const Donate = () => (
         </div>
 
         <a
-          href={BMC_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]"
-        >
+        href={BMC_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]">
+        
           <Coffee className="h-4 w-4" />
           Buy Me a Coffee
           <ExternalLink className="h-3 w-3 opacity-70" />
@@ -48,7 +48,7 @@ const Donate = () => (
         </p>
       </AnimatedSection>
     </div>
-  </Layout>
-);
+  </Layout>;
+
 
 export default Donate;
