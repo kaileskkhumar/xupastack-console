@@ -89,9 +89,9 @@ export interface SupabaseUrlValidation {
 }
 
 export interface LegalVersions {
-  terms: string;
-  privacy: string;
-  aup: string;
+  termsVersion: string;
+  privacyVersion: string;
+  aupVersion: string;
 }
 
 export interface SnippetsResult {
