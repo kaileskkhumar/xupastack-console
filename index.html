@@ -6,7 +6,11 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href="https://xupastack.com" />
     <title>XupaStack — Keep Supabase Working When It's Blocked</title>
-    <meta name="description" content="XupaStack provides free self-hosted and managed gateway options to keep your Supabase-powered apps working when supabase.co is blocked." />
+    <meta name="description" content="XupaStack provides free self-hosted and managed gateway options to keep your Supabase-powered apps working when supabase.co is blocked by ISPs like Jio, Airtel, BSNL." />
+    <meta name="keywords" content="Supabase blocked, Supabase not working, fix Supabase connection, Supabase gateway, Supabase proxy, Jio Supabase blocked, Airtel Supabase, BSNL Supabase, ERR_CONNECTION_TIMED_OUT Supabase, Supabase alternative URL, XupaStack" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Kailesk Khumar" />
+    <link rel="alternate" type="text/plain" href="https://xupastack.com/llms.txt" title="LLM-friendly summary" />
 
     <!-- OpenGraph -->
     <meta property="og:title" content="XupaStack — Keep Supabase Working When It's Blocked" />
@@ -48,7 +52,95 @@
           "name": "XupaStack",
           "url": "https://xupastack.com",
           "logo": "https://xupastack.com/favicon.svg",
-          "description": "Open-source gateway infrastructure for Supabase connectivity."
+          "description": "Open-source gateway infrastructure for Supabase connectivity.",
+          "founder": {
+            "@type": "Person",
+            "name": "Kailesk Khumar"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "XupaStack",
+          "url": "https://xupastack.com",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "Free open-source gateway that proxies traffic to Supabase when supabase.co is blocked by ISPs or firewalls.",
+          "featureList": "REST API proxy, Auth proxy, Storage proxy, Edge Functions proxy, GraphQL proxy, Realtime WebSocket proxy, OAuth redirect handling, CORS configuration, Rate limiting"
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Is XupaStack free?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Both managed and self-hosted gateway options are completely free. XupaStack is MIT-licensed open-source software."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why is Supabase blocked?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Some ISPs in India (Jio, Airtel, BSNL) block access to supabase.co domains via DNS sinkholes or IP-level blocks. XupaStack routes traffic through an alternative domain to bypass these blocks."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does XupaStack work with all Supabase features?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes — REST, Auth, Storage, Edge Functions, GraphQL, and Realtime WebSockets are all fully supported through the gateway."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I set up XupaStack?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Deploy a gateway (managed or self-hosted), then replace your SUPABASE_URL environment variable with your gateway URL. No other code changes needed."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I revert back to direct Supabase?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Simply change your SUPABASE_URL back to the original *.supabase.co URL. No data migration or schema changes are needed."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to fix Supabase connection issues with XupaStack",
+          "description": "Set up XupaStack gateway to bypass ISP blocks on supabase.co",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Deploy a gateway",
+              "text": "Choose managed (instant, no setup) or self-hosted (Docker/Cloudflare Workers) deployment."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Update your Supabase URL",
+              "text": "Replace SUPABASE_URL in your environment variables with your XupaStack gateway URL."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Your app works",
+              "text": "All Supabase traffic now routes through XupaStack. No other code changes needed."
+            }
+          ]
         }
       ]
     }
