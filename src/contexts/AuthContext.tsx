@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "https://api.xupastack.com";
 
@@ -29,6 +31,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   const fetchMe = useCallback(async () => {
     try {
@@ -44,10 +47,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         name: data.name || data.email?.split("@")[0] || "User",
         avatarUrl: data.avatar_url || data.avatarUrl,
       });
+      // Prefetch apps list so dashboard loads instantly
+      queryClient.prefetchQuery({ queryKey: ["apps"], queryFn: () => api.listApps() });
     } catch {
       setUser(null);
     }
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     setIsLoading(true);
