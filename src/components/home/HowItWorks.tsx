@@ -1,29 +1,27 @@
 import AnimatedSection from "@/components/AnimatedSection";
-import CodeBlock from "@/components/CodeBlock";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const steps = [
   {
     number: "01",
-    title: "Create gateway",
-    description: "Deploy a self-hosted worker or spin up a managed endpoint.",
-    code: "npx xupastack deploy --project-ref your-ref",
+    title: "Connect your Supabase project",
+    description: "Paste your Supabase URL, we validate it instantly.",
   },
   {
     number: "02",
-    title: "Swap SUPABASE_URL",
-    description: "Replace your environment variable. That's the only code change.",
-    code: `# .env\nSUPABASE_URL=https://your-ref-gw.xupastack.com`,
+    title: "Get your gateway URL",
+    description: "Replace SUPABASE_URL in your .env — one line change.",
   },
   {
     number: "03",
-    title: "Verify everything works",
-    description: "Run the doctor to confirm REST, Auth, Storage, and Realtime.",
-    code: "npx xupastack doctor --project-ref your-ref",
+    title: "Works in 60 seconds",
+    description: "Your users in India can now access your app.",
   },
 ];
 
 const HowItWorks = () => (
-  <section className="py-14 md:py-20 relative">
+  <section id="how-it-works" className="py-14 md:py-20 relative">
     <div className="section-container">
       <AnimatedSection className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">How it works</h2>
@@ -45,12 +43,21 @@ const HowItWorks = () => (
               <div className="pb-12 flex-1 min-w-0">
                 <h3 className="text-lg font-semibold text-foreground mb-1.5">{step.title}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{step.description}</p>
-                <CodeBlock code={step.code} />
               </div>
             </div>
           </AnimatedSection>
         ))}
       </div>
+
+      <AnimatedSection delay={0.4} className="text-center mt-4">
+        <Link
+          to="/app/new"
+          className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]"
+        >
+          Fix My App — Free
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </AnimatedSection>
     </div>
   </section>
 );

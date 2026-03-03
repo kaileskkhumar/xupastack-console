@@ -8,12 +8,20 @@ import {
 
 const faqs = [
   {
-    q: "Does this store my data?",
-    a: "No. XupaStack is a pass-through proxy. In self-hosted mode, nothing is stored — requests are forwarded to your Supabase project and responses are returned. In managed mode, we don't log request payloads by default, but the infrastructure theoretically could. For sensitive data, use self-hosted.",
+    q: "Is this legal?",
+    a: "Yes. XupaStack proxies your API traffic through Cloudflare's global network. You own the data flow. There's no data stored or modified — it's a transparent proxy.",
   },
   {
-    q: "Does Realtime work through the gateway?",
-    a: "Yes. XupaStack supports WebSocket upgrades for Supabase Realtime. Both self-hosted and managed modes proxy WebSocket connections.",
+    q: "What about email confirmation links?",
+    a: "Email confirmation links from Supabase go directly to Supabase servers. We recommend disabling email confirmation in Supabase Auth settings while the block is active, or using phone/OAuth auth.",
+  },
+  {
+    q: "What services are supported?",
+    a: "REST API, Authentication, Storage, and Realtime (WebSockets).",
+  },
+  {
+    q: "Does this store my data?",
+    a: "No. XupaStack is a pass-through proxy. In self-hosted mode, nothing is stored — requests are forwarded to your Supabase project and responses are returned. In managed mode, we don't log request payloads by default, but the infrastructure theoretically could. For sensitive data, use self-hosted.",
   },
   {
     q: "Do my API keys change?",
