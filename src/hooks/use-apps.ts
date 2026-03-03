@@ -38,6 +38,14 @@ export function useSnippets(id: string, enabled = true) {
   });
 }
 
+export function useSnippetByStack(id: string, stack: string) {
+  return useQuery<{ stack: string; snippet: string }>({
+    queryKey: ["snippet", id, stack],
+    queryFn: () => api.getSnippetByStack(id, stack),
+    enabled: !!id && !!stack,
+  });
+}
+
 export function useDiagnostics(id: string) {
   return useMutation({
     mutationFn: () => api.getDiagnostics(id),
