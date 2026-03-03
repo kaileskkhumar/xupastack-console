@@ -21,10 +21,10 @@ const Hero = () => (
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/50 bg-card/50 backdrop-blur-xl text-xs font-medium text-muted-foreground mb-8"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 backdrop-blur-xl text-xs font-bold text-primary mb-8 shadow-[0_0_20px_-4px_hsl(var(--primary)/0.5)]"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-          Open-source · Free forever
+          <span className="gradient-text-shimmer">Open-Source · Free Forever</span>
         </motion.div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-foreground text-balance mb-6">
@@ -48,7 +48,7 @@ const Hero = () => (
           className="flex flex-col sm:flex-row items-center justify-center gap-3"
         >
           <Link
-            to="/quickstart"
+            to="/app/new"
             className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]"
           >
             <Terminal className="h-4 w-4" />
@@ -56,7 +56,7 @@ const Hero = () => (
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
           <Link
-            to="/quickstart?mode=managed"
+            to="/app/new"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-border/50 bg-card/50 backdrop-blur-xl font-semibold text-sm text-foreground hover:bg-secondary/50 transition-all duration-200"
           >
             <Zap className="h-4 w-4" />
