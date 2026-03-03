@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, ArrowRight, ExternalLink, Server, Cloud, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { GatewayMode, GatewayStatus } from "@/data/mock-gateways";
+import { GatewayMode, GatewayStatus } from "@/data/gateway-types";
 import StatusBadge from "@/components/console/StatusBadge";
 import CopyButton from "@/components/console/CopyButton";
 import { useApps } from "@/hooks/use-apps";

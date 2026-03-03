@@ -1,4 +1,4 @@
-import { GatewayStatus } from "@/data/mock-gateways";
+import { GatewayStatus } from "@/data/gateway-types";
 
 const statusConfig: Record<GatewayStatus, { label: string; dotClass: string; textClass: string }> = {
   active: { label: "Active", dotClass: "bg-emerald-500", textClass: "text-emerald-400" },
