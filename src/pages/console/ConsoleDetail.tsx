@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useApp, useDeleteApp } from "@/hooks/use-apps";
 import DetailHeader from "@/components/console/detail/DetailHeader";
+import SetupChecklist from "@/components/console/detail/SetupChecklist";
 import GatewayUrlCard from "@/components/console/detail/GatewayUrlCard";
 import GoLiveChecklist from "@/components/console/detail/GoLiveChecklist";
 import DonationPopup from "@/components/console/DonationPopup";
@@ -40,6 +41,7 @@ const ConsoleDetail = () => {
     <div className="section-container py-10 max-w-3xl">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         <DetailHeader gw={gw} />
+        {gw.gatewayUrl && <SetupChecklist appId={gw.id} gatewayUrl={gw.gatewayUrl} />}
         {gw.gatewayUrl && <GatewayUrlCard url={gw.gatewayUrl} />}
         <GoLiveChecklist gw={gw} onDelete={handleDelete} isDeleting={deleteApp.isPending} />
       </motion.div>
