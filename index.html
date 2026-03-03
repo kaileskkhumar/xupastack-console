@@ -4,20 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://xupastack.com" />
     <title>XupaStack — Keep Supabase Working When It's Blocked</title>
     <meta name="description" content="XupaStack provides free self-hosted and managed gateway options to keep your Supabase-powered apps working when supabase.co is blocked." />
+
+    <!-- OpenGraph -->
     <meta property="og:title" content="XupaStack — Keep Supabase Working When It's Blocked" />
     <meta property="og:description" content="Free self-hosted and managed gateway options for Supabase connectivity." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://xupastack.com" />
+    <meta property="og:image" content="https://xupastack.com/og-image.png" />
+    <meta property="og:site_name" content="XupaStack" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="XupaStack — Keep Supabase Working" />
     <meta name="twitter:description" content="Free gateway to fix Supabase connectivity issues." />
+    <meta name="twitter:image" content="https://xupastack.com/og-image.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "XupaStack",
+          "url": "https://xupastack.com",
+          "description": "Free self-hosted and managed gateway to keep Supabase-powered apps working when supabase.co is blocked.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://xupastack.com/docs?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "name": "XupaStack",
+          "url": "https://xupastack.com",
+          "logo": "https://xupastack.com/favicon.svg",
+          "description": "Open-source gateway infrastructure for Supabase connectivity."
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>XupaStack — Keep Supabase Working When It's Blocked</h1>
+      <p>Free self-hosted and managed gateway to route Supabase traffic when supabase.co is blocked in your region.</p>
+      <p>Features: reverse-proxy gateway, automatic SSL, authentication passthrough, real-time WebSocket support.</p>
+      <a href="https://xupastack.com/docs">Documentation</a> |
+      <a href="https://xupastack.com/quickstart">Quickstart</a> |
+      <a href="https://xupastack.com/about">About</a>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
