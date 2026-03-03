@@ -1,0 +1,31 @@
+<svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-grad" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="hsl(265, 80%, 65%)" />
+      <stop offset="1" stop-color="hsl(280, 70%, 50%)" />
+    </linearGradient>
+    <filter id="logo-glow">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="hsl(0, 0%, 100%)" />
+  <!-- Outer rounded square -->
+  <rect x="16" y="16" width="480" height="480" rx="128" fill="hsl(265, 80%, 60%)" fill-opacity="0.08" stroke="url(#logo-grad)" stroke-width="24" />
+  <!-- X mark -->
+  <g filter="url(#logo-glow)">
+    <path
+      d="M160 160L256 256M256 256L352 352M256 256L352 160M256 256L160 352"
+      stroke="url(#logo-grad)"
+      stroke-width="40"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+  <!-- Inner glow dot -->
+  <circle cx="256" cy="256" r="32" fill="hsl(265, 80%, 70%)" fill-opacity="0.5" />
+</svg>
