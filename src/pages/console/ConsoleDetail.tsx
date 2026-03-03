@@ -58,7 +58,7 @@ const ConsoleDetail = () => {
           <TabsContent value="overview">
             {gw.gatewayUrl && <SetupChecklist appId={gw.id} gatewayUrl={gw.gatewayUrl} />}
             {gw.gatewayUrl && <GatewayUrlCard url={gw.gatewayUrl} />}
-            <IntegrationSnippets appId={gw.id} />
+            <IntegrationSnippets appId={gw.id} gatewayUrl={gw.gatewayUrl} mode={gw.mode} />
             <DiagnosticsCard appId={gw.id} />
             <GoLiveChecklist gw={gw} onDelete={handleDelete} isDeleting={deleteApp.isPending} />
           </TabsContent>
