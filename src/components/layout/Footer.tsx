@@ -36,6 +36,7 @@ const Footer = () => (
               <li><Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link></li>
               <li><Link to="/faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</Link></li>
               <li><Link to="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Security</Link></li>
+              <li><a href="https://status.xupastack.com" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Status</a></li>
             </ul>
           </div>
           <div>
@@ -68,6 +69,7 @@ const Footer = () => (
         <div className="flex items-center gap-4">
           <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
+          <Link to="/fair-use" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Fair Use</Link>
           <p className="text-xs text-muted-foreground">MIT License</p>
         </div>
       </div>
