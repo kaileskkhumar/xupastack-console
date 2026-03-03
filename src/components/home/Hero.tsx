@@ -25,7 +25,7 @@ const Hero = () => (
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 backdrop-blur-xl text-xs font-bold text-emerald-400 mb-8 shadow-[0_0_24px_-4px_rgba(16,185,129,0.5)]"
         >
           <span className="text-sm">🇮🇳</span>
-          Works in India
+          Works in India · Open-Source · Free Forever
         </motion.div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-foreground text-balance mb-6">
