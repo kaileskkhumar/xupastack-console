@@ -23,7 +23,7 @@ export interface CreateAppPayload {
   name: string;
   slug: string;
   mode: GatewayMode;
-  supabaseUrl: string;
+  upstreamHost: string;
   allowedOrigins: string[];
   enabledServices: string[];
   rateLimit: number;
