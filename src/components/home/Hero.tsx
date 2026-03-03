@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Terminal, Zap } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 
 const Hero = () => (
   <section className="relative overflow-hidden">
@@ -17,19 +17,20 @@ const Hero = () => (
         transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
         className="max-w-4xl mx-auto text-center"
       >
+        {/* Works in India badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 backdrop-blur-xl text-xs font-bold text-emerald-400 mb-8 shadow-[0_0_24px_-4px_rgba(16,185,129,0.5)]"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Open-Source · Free Forever
+          <span className="text-sm">🇮🇳</span>
+          Works in India
         </motion.div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-foreground text-balance mb-6">
           Supabase blocked in India?{" "}
-          <span className="gradient-text-shimmer">Keep your app working in minutes.</span>
+          <span className="gradient-text-shimmer">One URL change fixes it.</span>
         </h1>
 
         <motion.p
@@ -38,7 +39,7 @@ const Hero = () => (
           transition={{ duration: 0.6, delay: 0.3 }}
           className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-10 text-balance"
         >
-          XupaStack provides two free options: a privacy-first self-hosted gateway (recommended) and an instant managed gateway (fastest). Both keep Auth, Storage, Realtime, and Functions working.
+          XupaStack routes your Supabase traffic through Cloudflare — not blocked on Jio, Airtel, or ACT Fibernet. Works with every Supabase SDK. Free to start.
         </motion.p>
 
         <motion.div
@@ -51,8 +52,7 @@ const Hero = () => (
             to="/app/new"
             className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]"
           >
-            <Terminal className="h-4 w-4" />
-            Self-host (recommended)
+            Fix it now — it's free
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
           <Link
@@ -93,6 +93,18 @@ const Hero = () => (
           </code>
         </div>
       </motion.div>
+    </div>
+
+    {/* Urgency banner */}
+    <div className="border-t border-destructive/20 bg-destructive/[0.06]">
+      <div className="section-container py-3 flex items-center justify-center gap-2 text-xs sm:text-sm text-muted-foreground text-center">
+        <span className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse shrink-0" />
+        <span>
+          Supabase has been blocked by Indian ISPs since Feb 24, 2025.{" "}
+          <strong className="text-foreground">365,000+ developers affected.</strong>{" "}
+          No official fix timeline.
+        </span>
+      </div>
     </div>
   </section>
 );
