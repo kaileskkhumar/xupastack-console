@@ -69,7 +69,10 @@ const DiagnosticsCard = ({ appId }: DiagnosticsCardProps) => {
                   ) : (
                     <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
                   )}
-                  <span className="text-xs font-medium text-foreground">{SERVICE_LABELS[key] || key}</span>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium text-foreground">{SERVICE_LABELS[key] || key}</span>
+                    {isNull && <span className="text-[10px] text-muted-foreground">Not tested (storage not enabled)</span>}
+                  </div>
                 </div>
               );
             })}

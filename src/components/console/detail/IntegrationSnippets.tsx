@@ -46,7 +46,15 @@ const IntegrationSnippets = ({ appId, gatewayUrl, mode }: IntegrationSnippetsPro
     );
   }
 
-  if (isError || entries.length === 0) return null;
+  if (isError) {
+    return (
+      <div className="mb-6 rounded-xl border border-border bg-card/30 p-6 text-center">
+        <p className="text-sm text-muted-foreground">Deploy your gateway first to see code snippets.</p>
+      </div>
+    );
+  }
+
+  if (entries.length === 0) return null;
 
   const currentKey = activeTab && snippetsMap[activeTab] ? activeTab : entries[0][0];
   const currentCode = snippetsMap[currentKey];
