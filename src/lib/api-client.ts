@@ -41,6 +41,16 @@ export interface VerifyResult {
   allHealthy: boolean;
 }
 
+export interface SlugCheckResult {
+  available: boolean;
+  suggestions?: string[];
+}
+
+export interface SupabaseUrlValidation {
+  ok: boolean;
+  error?: string;
+}
+
 // ---------- API client ----------
 
 export const api = {
@@ -81,5 +91,16 @@ export const api = {
 
   verifyApp(id: string): Promise<VerifyResult> {
     return request<VerifyResult>(`/apps/${id}/verify`, { method: "POST" });
+  },
+
+  checkSlug(slug: string): Promise<SlugCheckResult> {
+    return request<SlugCheckResult>(`/apps/slug-check?slug=${encodeURIComponent(slug)}`);
+  },
+
+  validateSupabaseUrl(url: string): Promise<SupabaseUrlValidation> {
+    return request<SupabaseUrlValidation>("/validate/supabase-url", {
+      method: "POST",
+      body: JSON.stringify({ url }),
+    });
   },
 };

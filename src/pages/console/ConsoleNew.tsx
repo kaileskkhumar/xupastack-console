@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Server, Cloud, Check, Shield, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Server, Cloud, Check, Shield, Loader2, AlertCircle, CheckCircle2, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCreateApp } from "@/hooks/use-apps";
+import { useSlugCheck } from "@/hooks/use-slug-check";
+import { useSupabaseUrlValidation } from "@/hooks/use-supabase-url-validation";
+import { slugify } from "@/lib/slugify";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ALL_SERVICES = ["rest", "auth", "storage", "realtime", "functions", "graphql"];
 
@@ -11,6 +15,9 @@ const ConsoleNew = () => {
   const createApp = useCreateApp();
   const [step, setStep] = useState(1);
   const [mode, setMode] = useState<"self-hosted" | "managed">("self-hosted");
+  const [slugManual, setSlugManual] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     slug: "",
@@ -20,8 +27,29 @@ const ConsoleNew = () => {
     rateLimit: "1000",
   });
 
-  const updateForm = (key: string, value: string | string[]) =>
-    setForm((f) => ({ ...f, [key]: value }));
+  const slug = useSlugCheck(form.slug, form.slug.length >= 2);
+  const supabaseValidation = useSupabaseUrlValidation(form.supabaseUrl);
+
+  const updateForm = useCallback((key: string, value: string | string[]) =>
+    setForm((f) => ({ ...f, [key]: value })), []);
+
+  const handleNameChange = (name: string) => {
+    setForm((f) => ({
+      ...f,
+      name,
+      slug: slugManual ? f.slug : slugify(name),
+    }));
+  };
+
+  const handleSlugChange = (value: string) => {
+    setSlugManual(true);
+    updateForm("slug", slugify(value));
+  };
+
+  const resetSlug = () => {
+    setSlugManual(false);
+    updateForm("slug", slugify(form.name));
+  };
 
   const toggleService = (s: string) =>
     setForm((f) => ({
@@ -29,24 +57,50 @@ const ConsoleNew = () => {
       services: f.services.includes(s) ? f.services.filter((x) => x !== s) : [...f.services, s],
     }));
 
+  const canCreate =
+    form.name &&
+    form.slug &&
+    form.supabaseUrl &&
+    slug.state === "available" &&
+    supabaseValidation.state === "valid" &&
+    consent;
+
   const handleCreate = async () => {
-    const gw = await createApp.mutateAsync({
-      name: form.name,
-      slug: form.slug || form.name.toLowerCase().replace(/\s+/g, "-"),
-      mode,
-      supabaseUrl: form.supabaseUrl,
-      allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
-      enabledServices: form.services,
-      rateLimit: Number(form.rateLimit) || 1000,
-    });
-    if (mode === "self-hosted") {
-      navigate(`/app/${gw.id}/deploy`);
-    } else {
-      navigate(`/app/${gw.id}`);
+    setCreateError(null);
+    try {
+      const gw = await createApp.mutateAsync({
+        name: form.name,
+        slug: form.slug,
+        mode,
+        supabaseUrl: form.supabaseUrl,
+        allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
+        enabledServices: form.services,
+        rateLimit: Number(form.rateLimit) || 1000,
+      });
+      if (mode === "self-hosted") {
+        navigate(`/app/${gw.id}/deploy`);
+      } else {
+        navigate(`/app/${gw.id}`);
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      // Try to parse structured error
+      try {
+        const parsed = JSON.parse(message);
+        if (parsed.code === "slug_taken") {
+          setCreateError("This slug is already taken. Please choose another.");
+        } else if (parsed.code === "invalid_supabase_url") {
+          setCreateError("The Supabase URL is invalid or unreachable.");
+        } else if (parsed.code === "unauthorized") {
+          setCreateError("You're not authorized. Please log in again.");
+        } else {
+          setCreateError(parsed.message || message);
+        }
+      } catch {
+        setCreateError(message);
+      }
     }
   };
-
-  const canCreate = form.name && form.supabaseUrl;
 
   return (
     <div className="section-container py-10 max-w-2xl">
@@ -120,28 +174,121 @@ const ConsoleNew = () => {
               <button onClick={() => setStep(1)} className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2">← Change mode</button>
 
               <div className="glass-card p-6 space-y-5">
+                {/* Name + Slug */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">App name</label>
-                    <input type="text" value={form.name} onChange={(e) => updateForm("name", e.target.value)} placeholder="My Production App" className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                    <input
+                      type="text"
+                      value={form.name}
+                      onChange={(e) => handleNameChange(e.target.value)}
+                      placeholder="My Production App"
+                      className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Slug</label>
-                    <input type="text" value={form.slug} onChange={(e) => updateForm("slug", e.target.value)} placeholder="my-production-app" className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-foreground">Slug</label>
+                      {slugManual && (
+                        <button
+                          onClick={resetSlug}
+                          className="inline-flex items-center gap-1 text-[11px] text-primary hover:text-primary/80 transition-colors"
+                        >
+                          <RefreshCw className="h-3 w-3" /> Reset slug
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={form.slug}
+                      onChange={(e) => handleSlugChange(e.target.value)}
+                      placeholder="my-production-app"
+                      className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                    {/* Slug status */}
+                    <div className="space-y-1">
+                      {form.slug && (
+                        <p className="text-[11px] text-muted-foreground font-mono">
+                          https://{form.slug}.gw.xupastack.com
+                        </p>
+                      )}
+                      {slug.state === "checking" && (
+                        <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <Loader2 className="h-3 w-3 animate-spin" /> Checking…
+                        </p>
+                      )}
+                      {slug.state === "available" && (
+                        <p className="text-[11px] text-primary flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Available
+                        </p>
+                      )}
+                      {slug.state === "taken" && (
+                        <div>
+                          <p className="text-[11px] text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" /> Already taken
+                          </p>
+                          {slug.suggestions.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                              {slug.suggestions.map((s) => (
+                                <button
+                                  key={s}
+                                  onClick={() => { setSlugManual(true); updateForm("slug", s); }}
+                                  className="px-2 py-0.5 rounded text-[11px] border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                                >
+                                  {s}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
+                {/* Supabase URL */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Supabase Project URL</label>
-                  <input type="text" value={form.supabaseUrl} onChange={(e) => updateForm("supabaseUrl", e.target.value)} placeholder="https://xxxxx.supabase.co" className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input
+                    type="text"
+                    value={form.supabaseUrl}
+                    onChange={(e) => updateForm("supabaseUrl", e.target.value)}
+                    placeholder="https://xxxxx.supabase.co"
+                    className={`w-full h-10 px-3 rounded-lg border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring ${
+                      supabaseValidation.state === "invalid" ? "border-destructive" : "border-border"
+                    }`}
+                  />
+                  {supabaseValidation.state === "checking" && (
+                    <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Validating…
+                    </p>
+                  )}
+                  {supabaseValidation.state === "valid" && (
+                    <p className="text-[11px] text-primary flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> Valid Supabase URL
+                    </p>
+                  )}
+                  {supabaseValidation.state === "invalid" && supabaseValidation.error && (
+                    <p className="text-[11px] text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" /> {supabaseValidation.error}
+                    </p>
+                  )}
                 </div>
 
+                {/* Allowed Origins */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Allowed Origins</label>
-                  <input type="text" value={form.origins} onChange={(e) => updateForm("origins", e.target.value)} placeholder="https://myapp.com, https://staging.myapp.com" className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input
+                    type="text"
+                    value={form.origins}
+                    onChange={(e) => updateForm("origins", e.target.value)}
+                    placeholder="https://myapp.com, https://staging.myapp.com"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
                   <p className="text-[11px] text-muted-foreground">Comma-separated. Use * for development only.</p>
                 </div>
 
+                {/* Enabled Services */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Enabled Services</label>
                   <div className="flex flex-wrap gap-2">
@@ -153,11 +300,40 @@ const ConsoleNew = () => {
                   </div>
                 </div>
 
+                {/* Rate Limit */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Rate Limit (req/min)</label>
-                  <input type="number" value={form.rateLimit} onChange={(e) => updateForm("rateLimit", e.target.value)} className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input
+                    type="number"
+                    value={form.rateLimit}
+                    onChange={(e) => updateForm("rateLimit", e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
                 </div>
               </div>
+
+              {/* Consent */}
+              <label className="flex items-start gap-3 p-4 rounded-lg border border-border bg-secondary/30 cursor-pointer select-none">
+                <Checkbox
+                  checked={consent}
+                  onCheckedChange={(checked) => setConsent(checked === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-xs text-muted-foreground leading-relaxed">
+                  I confirm I own or have permission to proxy this Supabase project, and I agree to the{" "}
+                  <Link to="/terms" className="text-primary hover:underline">Terms</Link>,{" "}
+                  <Link to="/acceptable-use" className="text-primary hover:underline">Acceptable Use Policy</Link>, and{" "}
+                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                </span>
+              </label>
+
+              {/* Create error */}
+              {createError && (
+                <div className="flex items-start gap-2 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+                  <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                  <p className="text-xs text-destructive">{createError}</p>
+                </div>
+              )}
 
               <button
                 onClick={handleCreate}
