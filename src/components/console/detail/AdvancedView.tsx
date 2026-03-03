@@ -15,18 +15,14 @@ const AdvancedView = ({ gw, onDelete, isDeleting }: AdvancedViewProps) => {
   return (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="grid sm:grid-cols-3 gap-4">
-        <div className="glass-card p-5">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Requests this month</p>
-          <p className="text-xl font-display font-bold text-foreground">{(gw.requestsMonth ?? 0).toLocaleString()}</p>
-        </div>
+      <div className="grid sm:grid-cols-2 gap-4">
         <div className="glass-card p-5">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Rate limit</p>
           <p className="text-xl font-display font-bold text-foreground">{gw.rateLimitPerMin}/min</p>
         </div>
         <div className="glass-card p-5">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Last check</p>
-          <p className="text-xl font-display font-bold text-foreground">{gw.lastCheck || "—"}</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Created</p>
+          <p className="text-xl font-display font-bold text-foreground">{new Date(gw.createdAt * 1000).toLocaleDateString()}</p>
         </div>
       </div>
 
@@ -51,8 +47,8 @@ const AdvancedView = ({ gw, onDelete, isDeleting }: AdvancedViewProps) => {
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Created</p>
-            <p className="text-foreground text-xs">{gw.createdAt}</p>
+            <p className="text-xs text-muted-foreground mb-1">Mode</p>
+            <p className="text-foreground text-xs capitalize">{gw.mode}</p>
           </div>
         </div>
       </div>

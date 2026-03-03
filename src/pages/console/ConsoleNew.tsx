@@ -1,14 +1,15 @@
 import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Server, Cloud, Check, Shield, Loader2, AlertCircle, CheckCircle2, RefreshCw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Server, Cloud, Check, Shield, Loader2, AlertCircle, CheckCircle2, RefreshCw, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCreateApp, useLegalVersions } from "@/hooks/use-apps";
 import { useSlugCheck } from "@/hooks/use-slug-check";
 import { useSupabaseUrlValidation } from "@/hooks/use-supabase-url-validation";
 import { slugify } from "@/lib/slugify";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 
-const ALL_SERVICES = ["rest", "auth", "storage", "realtime", "functions", "graphql"];
+const ALL_SERVICES = ["rest", "auth", "storage", "functions", "graphql", "realtime"];
 
 const ConsoleNew = () => {
   const navigate = useNavigate();
@@ -26,12 +27,15 @@ const ConsoleNew = () => {
     origins: "",
     services: [...ALL_SERVICES],
     rateLimit: "600",
+    allowCredentials: false,
+    strictMode: false,
+    rewriteLocationHeaders: true,
   });
 
   const slug = useSlugCheck(form.slug, form.slug.length >= 2);
   const supabaseValidation = useSupabaseUrlValidation(form.supabaseUrl);
 
-  const updateForm = useCallback((key: string, value: string | string[]) =>
+  const updateForm = useCallback((key: string, value: string | string[] | boolean) =>
     setForm((f) => ({ ...f, [key]: value })), []);
 
   const handleNameChange = (name: string) => {
@@ -58,6 +62,9 @@ const ConsoleNew = () => {
       services: f.services.includes(s) ? f.services.filter((x) => x !== s) : [...f.services, s],
     }));
 
+  const originsArray = form.origins.split(",").map((o) => o.trim()).filter(Boolean);
+  const hasWildcardOrigin = originsArray.length === 0 || originsArray.includes("*");
+
   const canCreate =
     form.name &&
     form.slug &&
@@ -75,9 +82,12 @@ const ConsoleNew = () => {
         slug: form.slug,
         mode,
         upstreamHost: form.supabaseUrl,
-        allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
+        allowedOrigins: originsArray.length > 0 ? originsArray : ["*"],
+        allowCredentials: form.allowCredentials,
         enabledServices: form.services,
         rateLimitPerMin: Number(form.rateLimit) || 600,
+        strictMode: form.strictMode,
+        rewriteLocationHeaders: form.rewriteLocationHeaders,
         termsAccepted: true,
         termsVersion: legalVersions!.termsVersion,
         privacyVersion: legalVersions!.privacyVersion,
@@ -91,17 +101,18 @@ const ConsoleNew = () => {
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Something went wrong";
-      // Try to parse structured error
       try {
         const parsed = JSON.parse(message);
-        if (parsed.code === "slug_taken") {
+        if (parsed.code === "slug_taken" || parsed.error === "slug_taken") {
           setCreateError("This slug is already taken. Please choose another.");
-        } else if (parsed.code === "invalid_supabase_url") {
+        } else if (parsed.code === "invalid_supabase_url" || parsed.error === "invalid_supabase_url") {
           setCreateError("The Supabase URL is invalid or unreachable.");
+        } else if (parsed.error === "terms_not_accepted") {
+          setCreateError("You must accept the terms to continue.");
         } else if (parsed.code === "unauthorized") {
           setCreateError("You're not authorized. Please log in again.");
         } else {
-          setCreateError(parsed.message || message);
+          setCreateError(parsed.message || parsed.error || message);
         }
       } catch {
         setCreateError(message);
@@ -184,18 +195,19 @@ const ConsoleNew = () => {
                 {/* Name + Slug */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">App name</label>
+                    <label className="text-sm font-medium text-foreground">Gateway name</label>
                     <input
                       type="text"
                       value={form.name}
                       onChange={(e) => handleNameChange(e.target.value)}
                       placeholder="My Production App"
+                      maxLength={64}
                       className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium text-foreground">Slug</label>
+                      <label className="text-sm font-medium text-foreground">Gateway slug</label>
                       {slugManual && (
                         <button
                           onClick={resetSlug}
@@ -212,11 +224,12 @@ const ConsoleNew = () => {
                       placeholder="my-production-app"
                       className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                     />
-                    {/* Slug status */}
                     <div className="space-y-1">
                       {form.slug && (
                         <p className="text-[11px] text-muted-foreground font-mono">
-                          https://{form.slug}-gw.xupastack.com
+                          {mode === "managed"
+                            ? `https://${form.slug}-gw.xupastack.com`
+                            : "(will be set after deploy)"}
                         </p>
                       )}
                       {slug.state === "checking" && (
@@ -255,19 +268,19 @@ const ConsoleNew = () => {
 
                 {/* Supabase URL */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Upstream Supabase Project URL (original)</label>
+                  <label className="text-sm font-medium text-foreground">Supabase project URL</label>
                   <input
                     type="text"
                     value={form.supabaseUrl}
                     onChange={(e) => updateForm("supabaseUrl", e.target.value)}
-                    placeholder="https://xxxxx.supabase.co"
+                    placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co"
                     className={`w-full h-10 px-3 rounded-lg border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring ${
                       supabaseValidation.state === "invalid" ? "border-destructive" : "border-border"
                     }`}
                   />
                   {supabaseValidation.state === "checking" && (
                     <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-                      <Loader2 className="h-3 w-3 animate-spin" /> Validating…
+                      <Loader2 className="h-3 w-3 animate-spin" /> Checking…
                     </p>
                   )}
                   {supabaseValidation.state === "valid" && (
@@ -284,7 +297,7 @@ const ConsoleNew = () => {
 
                 {/* Allowed Origins */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Allowed Origins</label>
+                  <label className="text-sm font-medium text-foreground">Allowed origins (CORS)</label>
                   <input
                     type="text"
                     value={form.origins}
@@ -292,8 +305,26 @@ const ConsoleNew = () => {
                     placeholder="https://myapp.com, https://staging.myapp.com"
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
-                  <p className="text-[11px] text-muted-foreground">Comma-separated. Use * for development only.</p>
+                  <p className="text-[11px] text-muted-foreground">Comma-separated. Default: * (allow all).</p>
                 </div>
+
+                {/* Allow Credentials */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-foreground">Allow credentials</label>
+                    <p className="text-[11px] text-muted-foreground">Enable if your frontend uses cookies or auth headers.</p>
+                  </div>
+                  <Switch
+                    checked={form.allowCredentials}
+                    onCheckedChange={(v) => updateForm("allowCredentials", v)}
+                  />
+                </div>
+                {form.allowCredentials && hasWildcardOrigin && (
+                  <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                    <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-amber-500">Cannot combine credentials with wildcard (*) origins. Add specific origins above.</p>
+                  </div>
+                )}
 
                 {/* Enabled Services */}
                 <div className="space-y-2">
@@ -309,12 +340,39 @@ const ConsoleNew = () => {
 
                 {/* Rate Limit */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Rate Limit (req/min)</label>
+                  <label className="text-sm font-medium text-foreground">Rate limit (requests/min)</label>
                   <input
                     type="number"
                     value={form.rateLimit}
                     onChange={(e) => updateForm("rateLimit", e.target.value)}
+                    min={1}
+                    max={10000}
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <p className="text-[11px] text-muted-foreground">Per-client rate limit enforced by the gateway.</p>
+                </div>
+
+                {/* Strict Mode */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-foreground">Strict mode</label>
+                    <p className="text-[11px] text-muted-foreground">Only proxy paths belonging to enabled services; block all other paths with 404.</p>
+                  </div>
+                  <Switch
+                    checked={form.strictMode}
+                    onCheckedChange={(v) => updateForm("strictMode", v)}
+                  />
+                </div>
+
+                {/* Rewrite Location Headers */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-foreground">Rewrite Location headers</label>
+                    <p className="text-[11px] text-muted-foreground">Rewrite upstream Location headers to use the gateway URL.</p>
+                  </div>
+                  <Switch
+                    checked={form.rewriteLocationHeaders}
+                    onCheckedChange={(v) => updateForm("rewriteLocationHeaders", v)}
                   />
                 </div>
               </div>
@@ -327,10 +385,10 @@ const ConsoleNew = () => {
                   className="mt-0.5"
                 />
                 <span className="text-xs text-muted-foreground leading-relaxed">
-                  I confirm I own or have permission to proxy this Supabase project, and I agree to the{" "}
-                  <Link to="/terms" className="text-primary hover:underline">Terms</Link>,{" "}
-                  <Link to="/acceptable-use" className="text-primary hover:underline">Acceptable Use Policy</Link>, and{" "}
-                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                  I accept the{" "}
+                  <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>,{" "}
+                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>, and{" "}
+                  <Link to="/terms" className="text-primary hover:underline">Acceptable Use Policy</Link>.
                 </span>
               </label>
 

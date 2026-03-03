@@ -16,7 +16,7 @@ const STACKS = [
 
 interface StepUpdateUrlProps {
   upstreamUrl: string;
-  gatewayUrl: string;
+  gatewayUrl: string | null;
   onComplete: () => void;
   completed: boolean;
 }

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 
 interface StepFixAuthProps {
-  gatewayUrl: string;
+  gatewayUrl: string | null;
   onComplete: () => void;
   completed: boolean;
 }

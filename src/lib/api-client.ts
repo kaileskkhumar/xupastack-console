@@ -16,7 +16,6 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (res.status === 401) {
-    // Try to recover — caller can catch and redirect
     throw new AuthError("Unauthorized");
   }
 
@@ -35,7 +34,6 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error(body || `Request failed: ${res.status}`);
   }
 
-  // Handle 204 No Content
   const text = await res.text();
   if (!text) return undefined as unknown as T;
   return JSON.parse(text);
@@ -56,8 +54,11 @@ export interface CreateAppPayload {
   mode: GatewayMode;
   upstreamHost: string;
   allowedOrigins: string[];
+  allowCredentials: boolean;
   enabledServices: string[];
   rateLimitPerMin: number;
+  strictMode: boolean;
+  rewriteLocationHeaders: boolean;
   termsAccepted: boolean;
   termsVersion: string;
   privacyVersion: string;
@@ -69,6 +70,11 @@ export interface UpdateAppPayload {
   allowedOrigins?: string[];
   enabledServices?: string[];
   rateLimitPerMin?: number;
+  upstreamHost?: string;
+  allowCredentials?: boolean;
+  strictMode?: boolean;
+  rewriteLocationHeaders?: boolean;
+  selfhostGatewayUrl?: string;
 }
 
 export interface VerifyResult {
@@ -108,6 +114,11 @@ export interface DiagnosticsResult {
 export interface ConfigResult {
   configUrl: string;
   expiresAt: string;
+}
+
+export interface ProbeResult {
+  ok: boolean;
+  error?: string;
 }
 
 // ---------- API client ----------
@@ -176,5 +187,14 @@ export const api = {
 
   getDiagnostics(id: string): Promise<DiagnosticsResult> {
     return request<DiagnosticsResult>(`/apps/${id}/diagnostics`, { method: "POST" });
+  },
+
+  probeSupabase(url: string): Promise<ProbeResult> {
+    // Public endpoint — no credentials needed
+    return fetch(`${BASE}/public/probe-supabase`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    }).then((r) => r.json());
   },
 };

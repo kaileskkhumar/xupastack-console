@@ -1,19 +1,24 @@
 export type GatewayMode = "managed" | "selfhost";
-export type GatewayStatus = "active" | "disabled" | "needs-setup" | "error";
+export type GatewayStatus = "active" | "disabled";
 
 export interface Gateway {
   id: string;
+  userId: string;
   name: string;
   slug: string;
   mode: GatewayMode;
   status: GatewayStatus;
-  gatewayUrl: string;
+  upstreamHost: string;
   upstreamUrl: string;
+  gatewayUrl: string | null;
   allowedOrigins: string[];
+  allowCredentials: boolean;
   enabledServices: string[];
   rateLimitPerMin: number;
   strictMode: boolean;
-  requestsMonth: number;
-  lastCheck: string;
-  createdAt: string;
+  rewriteLocationHeaders: boolean;
+  proxyUrl: string | null;
+  selfhostGatewayUrl: string | null;
+  createdAt: number;
+  updatedAt: number;
 }

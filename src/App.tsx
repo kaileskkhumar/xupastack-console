@@ -25,6 +25,7 @@ import Terms from "./pages/Terms";
 import FixIndex from "./pages/fix/FixIndex";
 import FixISP from "./pages/fix/FixISP";
 import ErrConnectionTimedOut from "./pages/errors/ErrConnectionTimedOut";
+import AuthErrorPage from "./pages/AuthError";
 
 // Lazy-loaded console pages
 const ConsoleLayout = lazy(() => import("./components/layout/ConsoleLayout"));
@@ -88,6 +89,7 @@ const App = () => (
               <Route path="/fix" element={<FixIndex />} />
               <Route path="/fix/:isp" element={<FixISP />} />
               <Route path="/errors/err_connection_timed_out" element={<ErrConnectionTimedOut />} />
+              <Route path="/auth/error" element={<AuthErrorPage />} />
 
               {/* Console (auth-gated, lazy-loaded) */}
               <Route path="/app" element={<ProtectedConsole><Suspense fallback={null}><ConsoleDashboard /></Suspense></ProtectedConsole>} />
