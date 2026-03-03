@@ -118,19 +118,13 @@ const Docs = () => {
               <section id="cors">
                 <h2 className="text-2xl font-bold text-foreground mb-4">CORS</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Configure allowed origins to restrict which domains can make requests through your gateway.
+                  Configure allowed origins to restrict which domains can make requests through your gateway. Configured via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> dashboard.
                 </p>
                 <CodeBlock
-                  code={`// xupastack.config.js
-export default {
-  cors: {
-    allowedOrigins: ['https://your-app.com'],
-    allowCredentials: true,
-    maxAge: 86400
-  }
-}`}
+                  code={`allowedOrigins: ["https://your-app.com"]   // array of allowed origins, or ["*"]
+allowCredentials: true                      // boolean`}
                   language="javascript"
-                  title="CORS config"
+                  title="CORS settings"
                 />
               </section>
 
@@ -147,9 +141,9 @@ export default {
               <section id="dashboard">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Self-host dashboard</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Self-hosted deployments include a mini dashboard for monitoring and configuration. Access it at your gateway URL with the <code className="code-block px-1.5 py-0.5 text-xs">/dashboard</code> path.
+                  Self-hosted deployments include a mini dashboard for configuration management. Access it at your gateway URL with the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> path.
                 </p>
-                <CodeBlock code="https://your-gateway.your-domain.com/dashboard" title="Dashboard URL" />
+                <CodeBlock code="https://your-gateway.your-domain.com/__xupastack" title="Dashboard URL" />
               </section>
 
               <section id="managed-limits">
@@ -168,17 +162,17 @@ export default {
               <section id="strict-mode">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Strict mode</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Strict mode adds extra validation to requests passing through the gateway.
+                  Strict mode adds extra validation to requests passing through the gateway. Configured via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> dashboard.
                 </p>
-                <CodeBlock code={`export default {\n  strictMode: true,\n  services: {\n    rest: true,\n    auth: true,\n    storage: true,\n    realtime: true,\n    functions: false\n  }\n}`} language="javascript" title="Strict mode config" />
+                <CodeBlock code={`strictMode: true\nenabledServices: ["rest", "auth", "storage", "functions", "graphql", "realtime"]\n// Remove services you don't need, e.g. ["rest", "auth"]`} language="javascript" title="Strict mode + services" />
               </section>
 
               <section id="rate-limiting">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Rate limiting</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Configure per-IP rate limits to protect your gateway from abuse.
+                  Configure per-IP rate limits to protect your gateway from abuse. Configured via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> dashboard.
                 </p>
-                <CodeBlock code={`export default {\n  rateLimit: {\n    requests: 100,\n    windowMs: 60000\n  }\n}`} language="javascript" title="Rate limit config" />
+                <CodeBlock code={`rateLimitPerMin: 600   // number — requests per minute (default: 600)`} language="javascript" title="Rate limit setting" />
               </section>
 
               <section id="troubleshooting">

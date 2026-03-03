@@ -29,7 +29,7 @@ const features = [
   {
     icon: LayoutDashboard,
     title: "Self-hosted mini dashboard",
-    description: "Manage your gateway, view logs, and configure settings from a local dashboard.",
+    description: "Manage your gateway and configure settings from a built-in dashboard at /__xupastack.",
     span: "",
   },
   {
