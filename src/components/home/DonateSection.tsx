@@ -1,6 +1,5 @@
 import AnimatedSection from "@/components/AnimatedSection";
-import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { Heart, Coffee } from "lucide-react";
 
 const DonateSection = () => (
   <section className="py-24 md:py-32 relative">
@@ -18,13 +17,15 @@ const DonateSection = () => (
         <p className="text-muted-foreground text-lg leading-relaxed mb-10">
           If XupaStack saved your production app, consider donating. It funds maintenance, docs, and security reviews.
         </p>
-        <Link
-          to="/donate"
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]"
+        <a
+          href="https://buymeacoffee.com/kailesk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm transition-all duration-200 shadow-[0_0_24px_-4px_rgba(245,158,11,0.4)]"
         >
-          <Heart className="h-4 w-4" />
-          Support the project
-        </Link>
+          <Coffee className="h-4 w-4" />
+          Buy Me a Coffee
+        </a>
       </AnimatedSection>
     </div>
   </section>

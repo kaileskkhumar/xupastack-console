@@ -5,6 +5,7 @@ import { useApp, useDeleteApp } from "@/hooks/use-apps";
 import DetailHeader from "@/components/console/detail/DetailHeader";
 import GatewayUrlCard from "@/components/console/detail/GatewayUrlCard";
 import GoLiveChecklist from "@/components/console/detail/GoLiveChecklist";
+import DonationPopup from "@/components/console/DonationPopup";
 
 const ConsoleDetail = () => {
   const { id } = useParams();
@@ -42,6 +43,7 @@ const ConsoleDetail = () => {
         {gw.gatewayUrl && <GatewayUrlCard url={gw.gatewayUrl} />}
         <GoLiveChecklist gw={gw} onDelete={handleDelete} isDeleting={deleteApp.isPending} />
       </motion.div>
+      <DonationPopup />
     </div>
   );
 };
