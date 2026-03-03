@@ -72,7 +72,7 @@ const ConsoleNew = () => {
         name: form.name,
         slug: form.slug,
         mode,
-        supabaseUrl: form.supabaseUrl,
+        upstreamHost: form.supabaseUrl,
         allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
         enabledServices: form.services,
         rateLimit: Number(form.rateLimit) || 1000,
