@@ -18,15 +18,15 @@ const AdvancedView = ({ gw, onDelete, isDeleting }: AdvancedViewProps) => {
       <div className="grid sm:grid-cols-3 gap-4">
         <div className="glass-card p-5">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Requests this month</p>
-          <p className="text-xl font-display font-bold text-foreground">{gw.requestsMonth.toLocaleString()}</p>
+          <p className="text-xl font-display font-bold text-foreground">{(gw.requestsMonth ?? 0).toLocaleString()}</p>
         </div>
         <div className="glass-card p-5">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Rate limit</p>
-          <p className="text-xl font-display font-bold text-foreground">{gw.rateLimit}/min</p>
+          <p className="text-xl font-display font-bold text-foreground">{gw.rateLimitPerMin}/min</p>
         </div>
         <div className="glass-card p-5">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Last check</p>
-          <p className="text-xl font-display font-bold text-foreground">{gw.lastCheck}</p>
+          <p className="text-xl font-display font-bold text-foreground">{gw.lastCheck || "—"}</p>
         </div>
       </div>
 

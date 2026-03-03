@@ -1,28 +1,31 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useApp, useUpdateApp } from "@/hooks/use-apps";
+import { useApp, useUpdateApp, useDeleteApp } from "@/hooks/use-apps";
+import ConfirmModal from "@/components/console/ConfirmModal";
 
-const ALL_SERVICES = ["rest", "auth", "storage", "realtime", "functions", "graphql"];
+const ALL_SERVICES = ["rest", "auth", "storage", "realtime"];
 
 const ConsoleSettings = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: gw, isLoading } = useApp(id);
   const updateApp = useUpdateApp(id!);
+  const deleteApp = useDeleteApp();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
+  const [name, setName] = useState("");
   const [origins, setOrigins] = useState("");
   const [services, setServices] = useState<string[]>([]);
   const [rateLimit, setRateLimit] = useState("");
-  const [strictMode, setStrictMode] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Sync form state when data arrives
   if (gw && !initialized) {
+    setName(gw.name);
     setOrigins(gw.allowedOrigins.join(", "));
     setServices([...gw.enabledServices]);
-    setRateLimit(String(gw.rateLimit));
-    setStrictMode(gw.strictMode);
+    setRateLimit(String(gw.rateLimitPerMin ?? 60));
     setInitialized(true);
   }
 
@@ -30,12 +33,21 @@ const ConsoleSettings = () => {
     setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
 
   const handleSave = () => {
-    updateApp.mutate({
-      allowedOrigins: origins.split(",").map((o) => o.trim()).filter(Boolean),
-      enabledServices: services,
-      rateLimit: Number(rateLimit) || 1000,
-      strictMode,
-    });
+    const payload: Record<string, unknown> = {};
+    if (name !== gw?.name) payload.name = name;
+    const newOrigins = origins.split(",").map((o) => o.trim()).filter(Boolean);
+    if (JSON.stringify(newOrigins) !== JSON.stringify(gw?.allowedOrigins)) payload.allowedOrigins = newOrigins;
+    if (JSON.stringify(services) !== JSON.stringify(gw?.enabledServices)) payload.enabledServices = services;
+    const rl = Number(rateLimit) || 60;
+    if (rl !== gw?.rateLimitPerMin) payload.rateLimitPerMin = rl;
+    if (Object.keys(payload).length === 0) return;
+    updateApp.mutate(payload as any);
+  };
+
+  const handleDelete = async () => {
+    if (!gw) return;
+    await deleteApp.mutateAsync(gw.id);
+    navigate("/app");
   };
 
   if (isLoading || !gw) {
@@ -55,9 +67,34 @@ const ConsoleSettings = () => {
         </Link>
 
         <h1 className="text-2xl font-display font-bold text-foreground mb-2">Settings</h1>
-        <p className="text-sm text-muted-foreground mb-8">Configure CORS, rate limits, and service toggles for {gw.name}.</p>
+        <p className="text-sm text-muted-foreground mb-8">Configure {gw.name}.</p>
 
         <div className="space-y-6">
+          {/* Name */}
+          <div className="glass-card p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">Name</h3>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          {/* Rate Limit */}
+          <div className="glass-card p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">Rate Limit</h3>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                value={rateLimit}
+                onChange={(e) => setRateLimit(e.target.value)}
+                className="w-32 h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <span className="text-sm text-muted-foreground">requests / minute</span>
+            </div>
+          </div>
+
           {/* Origins */}
           <div className="glass-card p-6 space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Allowed Origins (CORS)</h3>
@@ -65,10 +102,10 @@ const ConsoleSettings = () => {
               type="text"
               value={origins}
               onChange={(e) => setOrigins(e.target.value)}
-              placeholder="https://myapp.com, https://staging.myapp.com"
+              placeholder="*, https://myapp.com"
               className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
-            <p className="text-[11px] text-muted-foreground">Comma-separated. Use * for development only — never in production.</p>
+            <p className="text-[11px] text-muted-foreground">Comma-separated. Default: *</p>
           </div>
 
           {/* Services */}
@@ -89,43 +126,6 @@ const ConsoleSettings = () => {
                 </button>
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground">Disable unused services to reduce attack surface.</p>
-          </div>
-
-          {/* Rate limit */}
-          <div className="glass-card p-6 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Rate Limit</h3>
-            <div className="flex items-center gap-3">
-              <input
-                type="number"
-                value={rateLimit}
-                onChange={(e) => setRateLimit(e.target.value)}
-                className="w-32 h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              <span className="text-sm text-muted-foreground">requests / minute</span>
-            </div>
-          </div>
-
-          {/* Strict mode */}
-          <div className="glass-card p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">Strict Mode</h3>
-                <p className="text-xs text-muted-foreground mt-1">Block requests without a valid origin header</p>
-              </div>
-              <button
-                onClick={() => setStrictMode(!strictMode)}
-                className={`w-11 h-6 rounded-full relative transition-colors ${
-                  strictMode ? "bg-primary" : "bg-secondary border border-border"
-                }`}
-              >
-                <span
-                  className={`absolute top-1 w-4 h-4 rounded-full transition-all ${
-                    strictMode ? "left-[22px] bg-primary-foreground" : "left-1 bg-muted-foreground"
-                  }`}
-                />
-              </button>
-            </div>
           </div>
 
           <button
@@ -136,8 +136,32 @@ const ConsoleSettings = () => {
             {updateApp.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
             {updateApp.isPending ? "Saving…" : "Save settings"}
           </button>
+
+          {/* Danger Zone */}
+          <div className="glass-card p-6 space-y-4 border-destructive/20">
+            <h3 className="text-sm font-semibold text-destructive">Danger Zone</h3>
+            <p className="text-xs text-muted-foreground">Permanently delete this gateway and all its configuration.</p>
+            <button
+              onClick={() => setDeleteOpen(true)}
+              disabled={deleteApp.isPending}
+              className="h-9 px-4 rounded-lg border border-destructive/50 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              {deleteApp.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              Delete gateway
+            </button>
+          </div>
         </div>
       </motion.div>
+
+      <ConfirmModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={async () => { await handleDelete(); setDeleteOpen(false); }}
+        title="Delete gateway?"
+        description="This action is irreversible. All configuration and history for this gateway will be permanently removed."
+        confirmLabel="Delete gateway"
+        variant="danger"
+      />
     </div>
   );
 };

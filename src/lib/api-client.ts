@@ -14,6 +14,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     credentials: "include",
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
+
+  if (res.status === 401) {
+    // Try to recover — caller can catch and redirect
+    throw new AuthError("Unauthorized");
+  }
+
   if (!res.ok) {
     if (res.status === 429) {
       const body = await res.text().catch(() => "");
@@ -28,7 +34,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const body = await res.text().catch(() => "");
     throw new Error(body || `Request failed: ${res.status}`);
   }
-  return res.json();
+
+  // Handle 204 No Content
+  const text = await res.text();
+  if (!text) return undefined as unknown as T;
+  return JSON.parse(text);
+}
+
+export class AuthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AuthError";
+  }
 }
 
 // ---------- public types ----------
@@ -40,7 +57,7 @@ export interface CreateAppPayload {
   upstreamHost: string;
   allowedOrigins: string[];
   enabledServices: string[];
-  rateLimit: number;
+  rateLimitPerMin: number;
   termsAccepted: boolean;
   termsVersion: string;
   privacyVersion: string;
@@ -48,15 +65,17 @@ export interface CreateAppPayload {
 }
 
 export interface UpdateAppPayload {
+  name?: string;
   allowedOrigins?: string[];
   enabledServices?: string[];
-  rateLimit?: number;
-  strictMode?: boolean;
+  rateLimitPerMin?: number;
 }
 
 export interface VerifyResult {
-  services: { name: string; ok: boolean }[];
-  allHealthy: boolean;
+  authOk: boolean;
+  restOk: boolean;
+  storageOk: boolean | null;
+  notes: string[];
 }
 
 export interface SlugCheckResult {
@@ -75,16 +94,15 @@ export interface LegalVersions {
   aup: string;
 }
 
-export interface Snippet {
-  language: string;
-  title: string;
-  code: string;
+export interface SnippetsResult {
+  snippets: Record<string, string>;
 }
 
 export interface DiagnosticsResult {
-  upstreamReachable: boolean;
-  services: { rest: boolean; auth: boolean; storage: boolean; realtime: boolean };
-  latencyMs: number;
+  authOk: boolean;
+  restOk: boolean;
+  storageOk: boolean | null;
+  notes: string[];
 }
 
 export interface ConfigResult {
@@ -112,7 +130,7 @@ export const api = {
 
   updateApp(id: string, payload: UpdateAppPayload): Promise<Gateway> {
     return request<Gateway>(`/apps/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       body: JSON.stringify(payload),
     });
   },
@@ -121,8 +139,12 @@ export const api = {
     return request<Gateway>(`/apps/${id}/deactivate`, { method: "POST" });
   },
 
-  deleteApp(id: string): Promise<void> {
-    return request<void>(`/apps/${id}`, { method: "DELETE" });
+  activateApp(id: string): Promise<Gateway> {
+    return request<Gateway>(`/apps/${id}/activate`, { method: "POST" });
+  },
+
+  deleteApp(id: string): Promise<{ deleted: boolean }> {
+    return request<{ deleted: boolean }>(`/apps/${id}`, { method: "DELETE" });
   },
 
   async getSignedConfigUrl(id: string): Promise<ConfigResult> {
@@ -148,11 +170,11 @@ export const api = {
     return request<LegalVersions>("/legal/versions");
   },
 
-  getSnippets(id: string): Promise<Snippet[]> {
-    return request<Snippet[]>(`/apps/${id}/snippets`);
+  getSnippets(id: string): Promise<SnippetsResult> {
+    return request<SnippetsResult>(`/apps/${id}/snippets`);
   },
 
   getDiagnostics(id: string): Promise<DiagnosticsResult> {
-    return request<DiagnosticsResult>(`/apps/${id}/diagnostics`);
+    return request<DiagnosticsResult>(`/apps/${id}/diagnostics`, { method: "POST" });
   },
 };

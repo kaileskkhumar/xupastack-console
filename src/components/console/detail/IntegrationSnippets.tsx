@@ -8,11 +8,24 @@ interface IntegrationSnippetsProps {
   appId: string;
 }
 
-const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
-  const { data: rawSnippets, isLoading, isError } = useSnippets(appId);
-  const [activeTab, setActiveTab] = useState(0);
+const TAB_LABELS: Record<string, string> = {
+  "supabase-js": "supabase-js",
+  "nextjs": "Next.js",
+  "vite": "Vite",
+  "node": "Node",
+  "python": "Python",
+  "flutter": "Flutter",
+  "expo": "Expo",
+  "emergent": "Emergent",
+  "other": "Other",
+};
 
-  const snippets = Array.isArray(rawSnippets) ? rawSnippets : [];
+const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
+  const { data: raw, isLoading, isError } = useSnippets(appId);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  const snippetsMap = raw?.snippets && typeof raw.snippets === "object" ? raw.snippets : {};
+  const entries = Object.entries(snippetsMap);
 
   if (isLoading) {
     return (
@@ -22,9 +35,10 @@ const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
     );
   }
 
-  if (isError || snippets.length === 0) return null;
+  if (isError || entries.length === 0) return null;
 
-  const current = snippets[activeTab];
+  const currentKey = activeTab && snippetsMap[activeTab] ? activeTab : entries[0][0];
+  const currentCode = snippetsMap[currentKey];
 
   return (
     <div className="mb-6">
@@ -35,29 +49,28 @@ const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
 
       <div className="rounded-xl border border-border bg-card/30 overflow-hidden">
         {/* Tabs */}
-        <div className="flex items-center gap-0.5 p-1.5 border-b border-border bg-secondary/30">
-          {snippets.map((snippet, i) => (
+        <div className="flex items-center gap-0.5 p-1.5 border-b border-border bg-secondary/30 overflow-x-auto">
+          {entries.map(([key]) => (
             <button
-              key={snippet.language}
-              onClick={() => setActiveTab(i)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                activeTab === i
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+                currentKey === key
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {snippet.language}
+              {TAB_LABELS[key] || key}
             </button>
           ))}
         </div>
 
         {/* Content */}
         <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs text-muted-foreground">{current.title}</p>
-            <CopyButton text={current.code} />
+          <div className="flex items-center justify-end mb-2">
+            <CopyButton text={currentCode} />
           </div>
-          <CodeBlock code={current.code} language={current.language.toLowerCase()} />
+          <CodeBlock code={currentCode} language="bash" />
         </div>
       </div>
     </div>

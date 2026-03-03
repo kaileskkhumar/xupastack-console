@@ -1,5 +1,5 @@
-export type GatewayMode = "self-hosted" | "managed";
-export type GatewayStatus = "active" | "paused" | "needs-setup" | "error";
+export type GatewayMode = "managed" | "selfhost";
+export type GatewayStatus = "active" | "disabled" | "needs-setup" | "error";
 
 export interface Gateway {
   id: string;
@@ -11,7 +11,7 @@ export interface Gateway {
   upstreamUrl: string;
   allowedOrigins: string[];
   enabledServices: string[];
-  rateLimit: number;
+  rateLimitPerMin: number;
   strictMode: boolean;
   requestsMonth: number;
   lastCheck: string;

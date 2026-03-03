@@ -15,7 +15,7 @@ const ConsoleNew = () => {
   const createApp = useCreateApp();
   const { data: legalVersions } = useLegalVersions();
   const [step, setStep] = useState(1);
-  const [mode, setMode] = useState<"self-hosted" | "managed">("self-hosted");
+  const [mode, setMode] = useState<"selfhost" | "managed">("selfhost");
   const [slugManual, setSlugManual] = useState(false);
   const [consent, setConsent] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ const ConsoleNew = () => {
     supabaseUrl: "",
     origins: "",
     services: [...ALL_SERVICES],
-    rateLimit: "1000",
+    rateLimit: "60",
   });
 
   const slug = useSlugCheck(form.slug, form.slug.length >= 2);
@@ -76,14 +76,14 @@ const ConsoleNew = () => {
         upstreamHost: form.supabaseUrl,
         allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
         enabledServices: form.services,
-        rateLimit: Number(form.rateLimit) || 1000,
+        rateLimitPerMin: Number(form.rateLimit) || 60,
         termsAccepted: true,
         termsVersion: legalVersions?.terms || "1.0",
         privacyVersion: legalVersions?.privacy || "1.0",
         aupVersion: legalVersions?.aup || "1.0",
       });
       localStorage.setItem("xupastack_show_donation", "1");
-      if (mode === "self-hosted") {
+      if (mode === "selfhost") {
         navigate(`/app/${gw.id}/deploy`);
       } else {
         navigate(`/app/${gw.id}`);
@@ -141,18 +141,18 @@ const ConsoleNew = () => {
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.25 }} className="space-y-4">
               {/* Self-hosted card */}
-              <button onClick={() => setMode("self-hosted")} className={`w-full text-left p-5 rounded-xl border-2 transition-all ${mode === "self-hosted" ? "border-primary bg-primary/5" : "border-border hover:border-border/80"}`}>
+              <button onClick={() => setMode("selfhost")} className={`w-full text-left p-5 rounded-xl border-2 transition-all ${mode === "selfhost" ? "border-primary bg-primary/5" : "border-border hover:border-border/80"}`}>
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"><Server className="h-5 w-5 text-primary" /></div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground">Self-hosted</p>
+                      <p className="text-sm font-semibold text-foreground">Self-host</p>
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-primary/15 text-primary">Recommended</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">Deploy into your Cloudflare account. You control the data plane — no third-party infrastructure in the request path.</p>
                     <div className="flex items-center gap-1.5 mt-2"><Shield className="h-3 w-3 text-primary" /><span className="text-[11px] text-muted-foreground">Recommended for production</span></div>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${mode === "self-hosted" ? "border-primary" : "border-border"}`}>{mode === "self-hosted" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}</div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${mode === "selfhost" ? "border-primary" : "border-border"}`}>{mode === "selfhost" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}</div>
                 </div>
               </button>
 
@@ -347,7 +347,7 @@ const ConsoleNew = () => {
                 className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {createApp.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                {createApp.isPending ? "Creating…" : `Create ${mode === "self-hosted" ? "& deploy" : "gateway"}`}
+                {createApp.isPending ? "Creating…" : `Create ${mode === "selfhost" ? "& deploy" : "gateway"}`}
               </button>
             </motion.div>
           )}
