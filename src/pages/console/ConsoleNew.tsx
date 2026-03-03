@@ -77,6 +77,7 @@ const ConsoleNew = () => {
         enabledServices: form.services,
         rateLimit: Number(form.rateLimit) || 1000,
       });
+      localStorage.setItem("xupastack_show_donation", "1");
       if (mode === "self-hosted") {
         navigate(`/app/${gw.id}/deploy`);
       } else {
