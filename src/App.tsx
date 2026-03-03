@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
+import { AuthError } from "@/lib/api-client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { lazy, Suspense } from "react";
@@ -34,7 +35,24 @@ const ConsoleDeploy = lazy(() => import("./pages/console/ConsoleDeploy"));
 const ConsoleSettings = lazy(() => import("./pages/console/ConsoleSettings"));
 const ConsoleHelp = lazy(() => import("./pages/console/ConsoleHelp"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error instanceof AuthError) {
+        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+      }
+    },
+  }),
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        if (error instanceof AuthError) return false;
+        return failureCount < 2;
+      },
+      staleTime: 30_000,
+    },
+  },
+});
 
 const ProtectedConsole = ({ children }: { children: React.ReactNode }) => (
   <RequireAuth>
