@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, CreateAppPayload, UpdateAppPayload } from "@/lib/api-client";
+import { api, CreateAppPayload, UpdateAppPayload, LegalVersions, Snippet, DiagnosticsResult } from "@/lib/api-client";
 import { toast } from "sonner";
 
 const APPS_KEY = ["apps"] as const;
@@ -19,6 +19,30 @@ export function useApp(id: string | undefined) {
     queryKey: appKey(id!),
     queryFn: () => api.getApp(id!),
     enabled: !!id,
+  });
+}
+
+export function useLegalVersions() {
+  return useQuery<LegalVersions>({
+    queryKey: ["legal-versions"],
+    queryFn: () => api.getLegalVersions(),
+    staleTime: 1000 * 60 * 60, // 1 hour
+  });
+}
+
+export function useSnippets(id: string) {
+  return useQuery<Snippet[]>({
+    queryKey: ["snippets", id],
+    queryFn: () => api.getSnippets(id),
+    enabled: !!id,
+  });
+}
+
+export function useDiagnostics(id: string) {
+  return useQuery<DiagnosticsResult>({
+    queryKey: ["diagnostics", id],
+    queryFn: () => api.getDiagnostics(id),
+    enabled: false, // on-demand only
   });
 }
 

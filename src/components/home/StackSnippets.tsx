@@ -8,7 +8,7 @@ const STACKS = [
     label: "Next.js / React",
     value: "nextjs",
     code: `# .env.local
-NEXT_PUBLIC_SUPABASE_URL=https://your-slug.gw.xupastack.com
+NEXT_PUBLIC_SUPABASE_URL=https://your-slug-gw.xupastack.com
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key   # ← unchanged`,
     hint: "Works with App Router, Pages Router, and Vite-based React.",
   },
@@ -16,7 +16,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key   # ← unchanged`,
     label: "Node.js",
     value: "node",
     code: `# .env
-SUPABASE_URL=https://your-slug.gw.xupastack.com
+SUPABASE_URL=https://your-slug-gw.xupastack.com
 SUPABASE_SERVICE_ROLE_KEY=your-key   # ← unchanged`,
     hint: "Express, Fastify, NestJS — any Node backend.",
   },
@@ -24,7 +24,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-key   # ← unchanged`,
     label: "Python",
     value: "python",
     code: `# .env or settings.py
-SUPABASE_URL=https://your-slug.gw.xupastack.com
+SUPABASE_URL=https://your-slug-gw.xupastack.com
 SUPABASE_KEY=your-anon-key   # ← unchanged`,
     hint: "Django, Flask, FastAPI, or standalone scripts.",
   },
@@ -32,7 +32,7 @@ SUPABASE_KEY=your-anon-key   # ← unchanged`,
     label: "Flutter / Dart",
     value: "flutter",
     code: `// lib/constants.dart
-const supabaseUrl = 'https://your-slug.gw.xupastack.com';
+const supabaseUrl = 'https://your-slug-gw.xupastack.com';
 const supabaseAnonKey = 'your-anon-key';  // ← unchanged`,
     hint: "Works with supabase_flutter package.",
   },
@@ -41,7 +41,7 @@ const supabaseAnonKey = 'your-anon-key';  // ← unchanged`,
     value: "generic",
     code: `// Wherever you initialize Supabase:
 const client = createClient(
-  'https://your-slug.gw.xupastack.com',  // ← Gateway URL
+  'https://your-slug-gw.xupastack.com',  // ← Gateway URL
   'your-anon-key'                         // ← unchanged
 );`,
     hint: "Any language or framework. Only the URL changes.",

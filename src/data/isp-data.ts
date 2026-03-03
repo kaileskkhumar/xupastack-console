@@ -78,47 +78,47 @@ export const ISP_DATA: Record<string, ISPData> = {
 export const STACK_SNIPPETS: Record<string, { label: string; env: string; file: string }> = {
   lovable: {
     label: "Lovable",
-    env: `# In Lovable's Supabase integration settings,\n# replace the Supabase URL with your gateway URL:\nhttps://your-ref.gw.xupastack.com`,
+    env: `# In Lovable's Supabase integration settings,\n# replace the Supabase URL with your gateway URL:\nhttps://your-ref-gw.xupastack.com`,
     file: "Supabase Settings",
   },
   emergent: {
     label: "Emergent (Bolt)",
-    env: `# Update the Supabase URL in your project settings\n# or .env file:\nSUPABASE_URL=https://your-ref.gw.xupastack.com\nSUPABASE_ANON_KEY=your-anon-key`,
+    env: `# Update the Supabase URL in your project settings\n# or .env file:\nSUPABASE_URL=https://your-ref-gw.xupastack.com\nSUPABASE_ANON_KEY=your-anon-key`,
     file: ".env",
   },
   nextjs: {
     label: "Next.js",
-    env: `# .env.local\nNEXT_PUBLIC_SUPABASE_URL=https://your-ref.gw.xupastack.com\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`,
+    env: `# .env.local\nNEXT_PUBLIC_SUPABASE_URL=https://your-ref-gw.xupastack.com\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`,
     file: ".env.local",
   },
   vite: {
     label: "Vite",
-    env: `# .env\nVITE_SUPABASE_URL=https://your-ref.gw.xupastack.com\nVITE_SUPABASE_ANON_KEY=your-anon-key`,
+    env: `# .env\nVITE_SUPABASE_URL=https://your-ref-gw.xupastack.com\nVITE_SUPABASE_ANON_KEY=your-anon-key`,
     file: ".env",
   },
   node: {
     label: "Node.js",
-    env: `# .env\nSUPABASE_URL=https://your-ref.gw.xupastack.com\nSUPABASE_SERVICE_ROLE_KEY=your-service-role-key`,
+    env: `# .env\nSUPABASE_URL=https://your-ref-gw.xupastack.com\nSUPABASE_SERVICE_ROLE_KEY=your-service-role-key`,
     file: ".env",
   },
   python: {
     label: "Python",
-    env: `# .env\nSUPABASE_URL=https://your-ref.gw.xupastack.com\nSUPABASE_KEY=your-anon-key\n\n# Or in code:\n# supabase = create_client(\n#   "https://your-ref.gw.xupastack.com",\n#   "your-anon-key"\n# )`,
+    env: `# .env\nSUPABASE_URL=https://your-ref-gw.xupastack.com\nSUPABASE_KEY=your-anon-key\n\n# Or in code:\n# supabase = create_client(\n#   "https://your-ref-gw.xupastack.com",\n#   "your-anon-key"\n# )`,
     file: ".env",
   },
   flutter: {
     label: "Flutter",
-    env: `// lib/constants.dart\nconst supabaseUrl = 'https://your-ref.gw.xupastack.com';\nconst supabaseAnonKey = 'your-anon-key';`,
+    env: `// lib/constants.dart\nconst supabaseUrl = 'https://your-ref-gw.xupastack.com';\nconst supabaseAnonKey = 'your-anon-key';`,
     file: "lib/constants.dart",
   },
   expo: {
     label: "Expo",
-    env: `// app.config.js\nexport default {\n  extra: {\n    supabaseUrl: 'https://your-ref.gw.xupastack.com',\n    supabaseAnonKey: 'your-anon-key',\n  },\n};`,
+    env: `// app.config.js\nexport default {\n  extra: {\n    supabaseUrl: 'https://your-ref-gw.xupastack.com',\n    supabaseAnonKey: 'your-anon-key',\n  },\n};`,
     file: "app.config.js",
   },
   other: {
     label: "Other",
-    env: `# Find where you initialize the Supabase client.\n# Replace the URL parameter:\n\n# Before:\n# createClient("https://abc.supabase.co", "your-key")\n\n# After:\n# createClient("https://abc.gw.xupastack.com", "your-key")`,
+    env: `# Find where you initialize the Supabase client.\n# Replace the URL parameter:\n\n# Before:\n# createClient("https://abc.supabase.co", "your-key")\n\n# After:\n# createClient("https://abc-gw.xupastack.com", "your-key")`,
     file: "supabase client init",
   },
 };
