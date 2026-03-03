@@ -237,6 +237,33 @@ const ConsoleNew = () => {
               </p>
             )}
           </div>
+
+          {/* Gateway Mode */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Gateway mode</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => updateForm("mode", "managed")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${form.mode === "managed" ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
+              >
+                Managed (fastest)
+              </button>
+              <button
+                onClick={() => updateForm("mode", "selfhost")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${form.mode === "selfhost" ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
+              >
+                Self-hosted (recommended)
+              </button>
+            </div>
+            {form.mode === "selfhost" && (
+              <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 mt-1">
+                <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-[11px] text-muted-foreground">
+                  Self-hosted gateways run on your own Cloudflare account. After creating, you'll deploy with one CLI command.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Legal line */}
@@ -256,33 +283,6 @@ const ConsoleNew = () => {
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-4">
             <div className="glass-card p-6 space-y-5">
-              {/* Mode */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Mode</label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => updateForm("mode", "managed")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${form.mode === "managed" ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
-                  >
-                    Managed (recommended)
-                  </button>
-                  <button
-                    onClick={() => updateForm("mode", "selfhost")}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${form.mode === "selfhost" ? "border-primary/50 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
-                  >
-                    Self-hosted
-                  </button>
-                </div>
-                {form.mode === "selfhost" && (
-                  <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 mt-2">
-                    <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-muted-foreground">
-                      Self-hosted gateways run on your own Cloudflare account. After creating, you'll deploy with one CLI command.
-                    </p>
-                  </div>
-                )}
-              </div>
-
               {/* Allowed Origins */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Allowed origins (CORS)</label>

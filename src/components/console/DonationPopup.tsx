@@ -32,14 +32,14 @@ const DonationPopup = () => {
     <Dialog open={open} onOpenChange={(v) => { if (!v) handleDismiss(); }}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden border-border bg-card">
         {/* Top accent strip */}
-        <div className="h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500" />
+        <div className="h-1.5 bg-gradient-to-r from-primary via-primary/80 to-primary" />
 
         <div className="px-6 pt-5 pb-6 space-y-5">
           <DialogTitle className="sr-only">Support XupaStack</DialogTitle>
 
           <div className="text-center space-y-3">
-            <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-amber-500/10 mx-auto">
-              <Coffee className="h-6 w-6 text-amber-500" />
+            <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-primary/10 mx-auto">
+              <Coffee className="h-6 w-6 text-primary" />
             </div>
             <h2 className="text-lg font-bold text-foreground">
               You just created a gateway — for free ☕
@@ -65,7 +65,7 @@ const DonationPopup = () => {
               href={BMC_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+              className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
             >
               <Coffee className="h-4 w-4" />
               Buy Me a Coffee
