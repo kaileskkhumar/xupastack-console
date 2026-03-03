@@ -63,6 +63,20 @@ const Hero = () => (
             Use managed gateway (fastest)
           </Link>
         </motion.div>
+
+        {/* Only-change callout */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.55 }}
+          className="mt-5 flex items-center justify-center gap-4 text-xs text-muted-foreground"
+        >
+          <span>Only change the base URL</span>
+          <span className="h-3 w-px bg-border" />
+          <span>Keys stay the same</span>
+          <span className="h-3 w-px bg-border" />
+          <span>Rollback = restore original URL</span>
+        </motion.div>
       </motion.div>
 
       <motion.div
