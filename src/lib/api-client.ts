@@ -2,6 +2,10 @@ import { Gateway, GatewayMode } from "@/data/gateway-types";
 
 const BASE = (import.meta.env.VITE_API_BASE as string) || "https://api.xupastack.com";
 
+// ---------- capacity event ----------
+
+export const CAPACITY_EVENT = "xupastack:capacity_reached";
+
 // ---------- helpers ----------
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -11,6 +15,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
   if (!res.ok) {
+    if (res.status === 429) {
+      const body = await res.text().catch(() => "");
+      try {
+        const parsed = JSON.parse(body);
+        if (parsed.error === "managed_capacity_reached") {
+          window.dispatchEvent(new CustomEvent(CAPACITY_EVENT));
+        }
+      } catch {}
+      throw new Error(body || "Rate limit exceeded");
+    }
     const body = await res.text().catch(() => "");
     throw new Error(body || `Request failed: ${res.status}`);
   }
@@ -27,6 +41,10 @@ export interface CreateAppPayload {
   allowedOrigins: string[];
   enabledServices: string[];
   rateLimit: number;
+  termsAccepted: boolean;
+  termsVersion: string;
+  privacyVersion: string;
+  aupVersion: string;
 }
 
 export interface UpdateAppPayload {
@@ -49,6 +67,29 @@ export interface SlugCheckResult {
 export interface SupabaseUrlValidation {
   ok: boolean;
   error?: string;
+}
+
+export interface LegalVersions {
+  terms: string;
+  privacy: string;
+  aup: string;
+}
+
+export interface Snippet {
+  language: string;
+  title: string;
+  code: string;
+}
+
+export interface DiagnosticsResult {
+  upstreamReachable: boolean;
+  services: { rest: boolean; auth: boolean; storage: boolean; realtime: boolean };
+  latencyMs: number;
+}
+
+export interface ConfigResult {
+  configUrl: string;
+  expiresAt: string;
 }
 
 // ---------- API client ----------
@@ -84,9 +125,8 @@ export const api = {
     return request<void>(`/apps/${id}`, { method: "DELETE" });
   },
 
-  async getSignedConfigUrl(id: string): Promise<string> {
-    const { url } = await request<{ url: string }>(`/apps/${id}/config.json`);
-    return url;
+  async getSignedConfigUrl(id: string): Promise<ConfigResult> {
+    return request<ConfigResult>(`/apps/${id}/config.json`);
   },
 
   verifyApp(id: string): Promise<VerifyResult> {
@@ -102,5 +142,17 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ url }),
     });
+  },
+
+  getLegalVersions(): Promise<LegalVersions> {
+    return request<LegalVersions>("/legal/versions");
+  },
+
+  getSnippets(id: string): Promise<Snippet[]> {
+    return request<Snippet[]>(`/apps/${id}/snippets`);
+  },
+
+  getDiagnostics(id: string): Promise<DiagnosticsResult> {
+    return request<DiagnosticsResult>(`/apps/${id}/diagnostics`);
   },
 };

@@ -12,7 +12,7 @@ const steps = [
     number: "02",
     title: "Swap SUPABASE_URL",
     description: "Replace your environment variable. That's the only code change.",
-    code: `# .env\nSUPABASE_URL=https://your-ref.gw.xupastack.com`,
+    code: `# .env\nSUPABASE_URL=https://your-ref-gw.xupastack.com`,
   },
   {
     number: "03",

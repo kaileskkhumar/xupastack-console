@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Server, Cloud, Check, Shield, Loader2, AlertCircle, CheckCircle2, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCreateApp } from "@/hooks/use-apps";
+import { useCreateApp, useLegalVersions } from "@/hooks/use-apps";
 import { useSlugCheck } from "@/hooks/use-slug-check";
 import { useSupabaseUrlValidation } from "@/hooks/use-supabase-url-validation";
 import { slugify } from "@/lib/slugify";
@@ -13,6 +13,7 @@ const ALL_SERVICES = ["rest", "auth", "storage", "realtime", "functions", "graph
 const ConsoleNew = () => {
   const navigate = useNavigate();
   const createApp = useCreateApp();
+  const { data: legalVersions } = useLegalVersions();
   const [step, setStep] = useState(1);
   const [mode, setMode] = useState<"self-hosted" | "managed">("self-hosted");
   const [slugManual, setSlugManual] = useState(false);
@@ -76,6 +77,10 @@ const ConsoleNew = () => {
         allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
         enabledServices: form.services,
         rateLimit: Number(form.rateLimit) || 1000,
+        termsAccepted: true,
+        termsVersion: legalVersions?.terms || "1.0",
+        privacyVersion: legalVersions?.privacy || "1.0",
+        aupVersion: legalVersions?.aup || "1.0",
       });
       localStorage.setItem("xupastack_show_donation", "1");
       if (mode === "self-hosted") {
@@ -210,7 +215,7 @@ const ConsoleNew = () => {
                     <div className="space-y-1">
                       {form.slug && (
                         <p className="text-[11px] text-muted-foreground font-mono">
-                          https://{form.slug}.gw.xupastack.com
+                          https://{form.slug}-gw.xupastack.com
                         </p>
                       )}
                       {slug.state === "checking" && (
