@@ -4,6 +4,7 @@ import ChooseFix from "@/components/home/ChooseFix";
 import HowItWorks from "@/components/home/HowItWorks";
 import FeaturesGrid from "@/components/home/FeaturesGrid";
 import TrustSection from "@/components/home/TrustSection";
+import HomeFAQ from "@/components/home/HomeFAQ";
 import DonateSection from "@/components/home/DonateSection";
 
 const Index = () => (
@@ -13,6 +14,7 @@ const Index = () => (
     <HowItWorks />
     <FeaturesGrid />
     <TrustSection />
+    <HomeFAQ />
     <DonateSection />
   </Layout>
 );
