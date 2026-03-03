@@ -78,11 +78,11 @@ const StepUpdateUrl = ({ upstreamUrl, gatewayUrl, onComplete, completed }: StepU
       {/* Before / After */}
       <div className="grid sm:grid-cols-2 gap-3">
         <div className="rounded-lg border border-border bg-secondary/30 p-3">
-          <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">Before (Supabase direct)</p>
+          <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">Before — Upstream Supabase Project URL (original)</p>
           <p className="text-xs font-mono text-foreground truncate">{upstreamUrl}</p>
         </div>
         <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
-          <p className="text-[11px] text-primary uppercase tracking-wider mb-1">After (via XupaStack)</p>
+          <p className="text-[11px] text-primary uppercase tracking-wider mb-1">After — Gateway URL (new base URL)</p>
           <p className="text-xs font-mono text-foreground truncate">{gatewayUrl}</p>
         </div>
       </div>

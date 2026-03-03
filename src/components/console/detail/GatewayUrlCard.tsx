@@ -16,7 +16,7 @@ const GatewayUrlCard = ({ url }: GatewayUrlCardProps) => {
 
   return (
     <div className="glass-card p-5 mb-8">
-      <p className="text-xs text-muted-foreground mb-2">Gateway URL</p>
+      <p className="text-xs text-muted-foreground mb-2">Gateway URL (new base URL)</p>
       <div className="flex items-center justify-between gap-3">
         <p className="text-base font-mono font-semibold text-foreground truncate">{url}</p>
         <div className="flex items-center gap-2 shrink-0">

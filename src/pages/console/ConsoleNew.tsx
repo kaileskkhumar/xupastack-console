@@ -249,7 +249,7 @@ const ConsoleNew = () => {
 
                 {/* Supabase URL */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Supabase Project URL</label>
+                  <label className="text-sm font-medium text-foreground">Upstream Supabase Project URL (original)</label>
                   <input
                     type="text"
                     value={form.supabaseUrl}
