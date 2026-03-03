@@ -12,6 +12,7 @@ import DonationPopup from "@/components/console/DonationPopup";
 import CapacityModal from "@/components/console/CapacityModal";
 import { api } from "@/lib/api-client";
 import { DiagnosticsResult } from "@/lib/api-client";
+import SetupChecklist from "@/components/console/detail/SetupChecklist";
 
 const ALL_SERVICES = ["rest", "auth", "storage", "functions", "graphql", "realtime"];
 const STACKS = ["supabase-js", "nextjs", "vite", "node", "python", "flutter", "expo", "emergent", "other"];
@@ -78,6 +79,9 @@ const ConsoleDetail = () => {
           <>
             {/* Section 1 — Gateway URL */}
             <GatewayUrlSection gw={gw} gatewayUrl={gatewayUrl} />
+
+            {/* Setup Checklist */}
+            <SetupChecklist appId={gw.id} gatewayUrl={gatewayUrl || ""} upstreamHost={gw.upstreamHost || gw.upstreamUrl || ""} />
 
             {/* Section 2 — Quick Integration */}
             <QuickIntegrationSection appId={gw.id} />
