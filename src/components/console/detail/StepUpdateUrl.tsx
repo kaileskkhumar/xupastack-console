@@ -64,7 +64,7 @@ const getSnippet = (stack: string, gwUrl: string): { code: string; hint: string 
 };
 
 const StepUpdateUrl = ({ upstreamUrl, gatewayUrl, onComplete, completed }: StepUpdateUrlProps) => {
-  const [activeStack, setActiveStack] = useState("supabase-js");
+  const [activeStack, setActiveStack] = useState(STACKS[0].value);
   const [search, setSearch] = useState("");
 
   const filtered = STACKS.filter((s) =>

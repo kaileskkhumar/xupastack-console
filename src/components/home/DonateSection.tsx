@@ -22,18 +22,14 @@ const DonateSection = () =>
           One person. Zero funding. Your support keeps it free.
         </h2>
         <p className="text-muted-foreground text-lg leading-relaxed mb-4">
-          
-
-  
-
- 
-
-
-I built XupaStack in my own time, on my own money, and I've kept it free because that's the only way it helps everyone. But free doesn't mean it costs nothing. Servers are expensive and every hour I spend maintaining this is an hour I'm not paying my rent.
-This stays free as long as I can keep it free. If it saved your app, help me save the next one.
-        
-      
-      </p>
+          I'm not a company. I'm one person who saw 365 million developers get cut off and couldn't look away.
+        </p>
+        <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+          I built XupaStack in my own time, on my own money, and I've kept it free because that's the only way it helps everyone. But free doesn't mean it costs nothing. Servers are expensive. Security audits are expensive. And every hour I spend maintaining this is an hour I'm not paying my rent.
+        </p>
+        <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+          If your app stayed alive because of this, I'm asking you directly — help keep it alive. Not for me. For the developer who finds it at 2am when their production app is down and their users can't sign in.
+        </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
           <a href="https://buymeacoffee.com/kailesk" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]">

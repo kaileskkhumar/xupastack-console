@@ -12,6 +12,7 @@ interface IntegrationSnippetsProps {
 
 const TAB_LABELS: Record<string, string> = {
   "supabase-js": "supabase-js",
+  "lovable": "Lovable",
   "nextjs": "Next.js",
   "vite": "Vite",
   "node": "Node",
