@@ -45,7 +45,7 @@ const FixISP = () => {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/quickstart">Self-host (recommended)</Link>
+                <Link to="/app/new">Self-host (recommended)</Link>
               </Button>
             </div>
           </AnimatedSection>
