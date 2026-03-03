@@ -5,6 +5,7 @@ import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import DonationBanner from "@/components/console/DonationBanner";
+import DonationPopup from "@/components/console/DonationPopup";
 
 const consoleNav = [
   { label: "Apps", href: "/app", icon: LayoutGrid },
@@ -104,6 +105,7 @@ const ConsoleLayout = ({ children }: { children: ReactNode }) => {
       </header>
 
       <DonationBanner />
+      <DonationPopup />
       <main className="flex-1">{children}</main>
     </div>
   );

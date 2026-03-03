@@ -15,16 +15,16 @@ const DonationBanner = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-yellow-500/10 border-b border-amber-500/20">
-      <div className="section-container flex items-center justify-between gap-3 py-2">
-        <p className="text-xs text-muted-foreground flex-1 min-w-0">
+    <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-b border-primary/20">
+      <div className="section-container flex items-center justify-center gap-3 py-2">
+        <p className="text-xs text-muted-foreground text-center">
           <span className="hidden sm:inline">XupaStack is free because of people like you — </span>
           <span className="sm:hidden">Free &amp; community-funded — </span>
           <a
             href={BMC_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+            className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
           >
             <Coffee className="h-3 w-3" />
             Support the solo founder behind it
