@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useApp, useUpdateApp, useDeleteApp } from "@/hooks/use-apps";
 import ConfirmModal from "@/components/console/ConfirmModal";
 
-const ALL_SERVICES = ["rest", "auth", "storage", "realtime"];
+const ALL_SERVICES = ["rest", "auth", "storage", "functions", "graphql", "realtime"];
 
 const ConsoleSettings = () => {
   const { id } = useParams();

@@ -25,7 +25,7 @@ const ConsoleNew = () => {
     supabaseUrl: "",
     origins: "",
     services: [...ALL_SERVICES],
-    rateLimit: "60",
+    rateLimit: "600",
   });
 
   const slug = useSlugCheck(form.slug, form.slug.length >= 2);
@@ -64,7 +64,8 @@ const ConsoleNew = () => {
     form.supabaseUrl &&
     slug.state === "available" &&
     supabaseValidation.state === "valid" &&
-    consent;
+    consent &&
+    !!legalVersions;
 
   const handleCreate = async () => {
     setCreateError(null);
@@ -76,11 +77,11 @@ const ConsoleNew = () => {
         upstreamHost: form.supabaseUrl,
         allowedOrigins: form.origins.split(",").map((o) => o.trim()).filter(Boolean),
         enabledServices: form.services,
-        rateLimitPerMin: Number(form.rateLimit) || 60,
+        rateLimitPerMin: Number(form.rateLimit) || 600,
         termsAccepted: true,
-        termsVersion: legalVersions?.termsVersion || "1.0",
-        privacyVersion: legalVersions?.privacyVersion || "1.0",
-        aupVersion: legalVersions?.aupVersion || "1.0",
+        termsVersion: legalVersions!.termsVersion,
+        privacyVersion: legalVersions!.privacyVersion,
+        aupVersion: legalVersions!.aupVersion,
       });
       localStorage.setItem("xupastack_show_donation", "1");
       if (mode === "selfhost") {
