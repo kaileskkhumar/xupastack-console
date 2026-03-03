@@ -1,73 +1,88 @@
-# Welcome to your Lovable project
+# XupaStack — Console
 
-## Project info
+> The open-source web console for [XupaStack](https://xupastack.com) — a Cloudflare gateway that keeps Supabase working when `supabase.co` is blocked by ISPs.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-## How can I edit this code?
+**Live:** [xupastack.com](https://xupastack.com) · **Backend:** [xupastack-backend](https://github.com/kaileskkhumar/xupastack-backend)
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## What is this?
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+This is the frontend for XupaStack — the landing page, fix guides, documentation, and the console where users create and manage their Supabase gateways.
 
-Changes made via Lovable will be committed automatically to this repo.
+When Indian ISPs (Jio, Airtel, ACT) block `*.supabase.co`, this console lets developers spin up a proxy gateway in under 60 seconds.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **React 18** + **TypeScript**
+- **Vite** — build tool
+- **Tailwind CSS** — styling
+- **shadcn/ui** — component library
+- **React Query** — data fetching
+- **React Router** — routing
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Project Structure
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```
+src/
+  pages/          # Route-level pages (Home, Docs, Guides, Fix, Console)
+  components/     # Reusable UI components
+    home/         # Landing page sections
+    console/      # Console dashboard components
+    layout/       # Header, Footer, Layout wrappers
+  data/           # Static data (ISP info, stack snippets, blog posts)
+  hooks/          # Custom React hooks
+  lib/            # API client and utilities
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## Local Development
+
+**Requirements:** Node 18+, npm or bun
+
+```bash
+# Clone the repo
+git clone https://github.com/kaileskkhumar/xupastack-console.git
+cd xupastack-console
+
+# Install dependencies
+npm install
+
+# Set up environment
+cp .env.example .env.local
+# Set VITE_API_BASE to your local API (default: https://api.xupastack.com)
+
+# Start dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Open [http://localhost:5173](http://localhost:5173).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## Environment Variables
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+| Variable | Description | Default |
+|---|---|---|
+| `VITE_API_BASE` | XupaStack API base URL | `https://api.xupastack.com` |
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Pull requests are welcome. See [CONTRIBUTING.md](https://github.com/kaileskkhumar/xupastack-backend/blob/main/CONTRIBUTING.md) for guidelines.
 
-## How can I deploy this project?
+For backend changes, see [xupastack-backend](https://github.com/kaileskkhumar/xupastack-backend).
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0) — free to use, modify, and self-host. If you run a modified version as a public service, you must open-source your changes.
