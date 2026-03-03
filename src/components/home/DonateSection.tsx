@@ -34,9 +34,6 @@ This stays free as long as I can keep it free. If it saved your app, help me sav
         
       
       </p>
-        <p className="text-muted-foreground text-base leading-relaxed mb-10">
-{"\n"}
-        </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
           <a href="https://buymeacoffee.com/kailesk" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all duration-200 shadow-[0_0_24px_-4px_hsl(var(--primary)/0.4)]">
