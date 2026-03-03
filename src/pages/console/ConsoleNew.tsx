@@ -78,9 +78,9 @@ const ConsoleNew = () => {
         enabledServices: form.services,
         rateLimitPerMin: Number(form.rateLimit) || 60,
         termsAccepted: true,
-        termsVersion: legalVersions?.terms || "1.0",
-        privacyVersion: legalVersions?.privacy || "1.0",
-        aupVersion: legalVersions?.aup || "1.0",
+        termsVersion: legalVersions?.termsVersion || "1.0",
+        privacyVersion: legalVersions?.privacyVersion || "1.0",
+        aupVersion: legalVersions?.aupVersion || "1.0",
       });
       localStorage.setItem("xupastack_show_donation", "1");
       if (mode === "selfhost") {
