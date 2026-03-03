@@ -59,7 +59,7 @@ const StepDiagnostics = ({ appId, onComplete, completed }: StepDiagnosticsProps)
       {verify.data && (
         <div className="space-y-3">
           <div className="space-y-2">
-            {verify.data.services.map((svc) => {
+            {(Array.isArray(verify.data.services) ? verify.data.services : []).map((svc) => {
               const meta = SERVICE_META[svc.name.toLowerCase()] || {
                 label: svc.name,
                 required: false,

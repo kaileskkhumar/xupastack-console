@@ -9,8 +9,10 @@ interface IntegrationSnippetsProps {
 }
 
 const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
-  const { data: snippets, isLoading, isError } = useSnippets(appId);
+  const { data: rawSnippets, isLoading, isError } = useSnippets(appId);
   const [activeTab, setActiveTab] = useState(0);
+
+  const snippets = Array.isArray(rawSnippets) ? rawSnippets : [];
 
   if (isLoading) {
     return (
@@ -20,7 +22,7 @@ const IntegrationSnippets = ({ appId }: IntegrationSnippetsProps) => {
     );
   }
 
-  if (isError || !snippets || snippets.length === 0) return null;
+  if (isError || snippets.length === 0) return null;
 
   const current = snippets[activeTab];
 
