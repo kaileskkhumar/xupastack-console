@@ -1,0 +1,59 @@
+# XupaStack
+
+> XupaStack is a free, open-source gateway that keeps Supabase-powered apps working when supabase.co is blocked by ISPs or network firewalls.
+
+## What is XupaStack?
+
+XupaStack provides reverse-proxy gateway infrastructure for Supabase connectivity. When ISPs (like Jio, Airtel, BSNL in India) or corporate firewalls block access to supabase.co, XupaStack routes your app's traffic through an unblocked domain — with zero code changes beyond updating your SUPABASE_URL.
+
+## Key Features
+
+- **Full Supabase API Support**: REST (PostgREST), Auth (GoTrue), Storage, Edge Functions, GraphQL, and Realtime WebSockets
+- **Two Deployment Options**: Managed gateway (instant, zero setup) or self-hosted (full control via Docker/Cloudflare Workers)
+- **Redirect-Safe Auth**: OAuth flows (Google, GitHub, Apple) work seamlessly through the gateway
+- **Automatic SSL**: TLS certificates managed automatically
+- **Real-time WebSocket Proxying**: Full support for Supabase Realtime subscriptions
+- **CORS Configuration**: Configurable allowed origins
+- **Rate Limiting**: Per-IP rate limits to protect against abuse
+- **Strict Mode**: Extra request validation for security
+
+## How It Works
+
+1. Deploy a XupaStack gateway (managed or self-hosted)
+2. Replace your SUPABASE_URL with your gateway URL
+3. Your app works normally — all traffic routes through XupaStack to Supabase
+
+## Who Is It For?
+
+- Developers whose users are in regions where supabase.co is blocked
+- Teams needing a reliable fallback for Supabase connectivity
+- Anyone experiencing ERR_CONNECTION_TIMED_OUT errors connecting to Supabase
+
+## Important Links
+
+- Website: https://xupastack.com
+- Documentation: https://xupastack.com/docs
+- Quickstart: https://xupastack.com/quickstart
+- Guides: https://xupastack.com/guides
+- FAQ: https://xupastack.com/faq
+- Blog: https://xupastack.com/blog
+- Security: https://xupastack.com/security
+- About: https://xupastack.com/about
+
+## Backout Plan
+
+Reverting is trivial: change SUPABASE_URL back to your original *.supabase.co URL. No data migration or schema changes needed.
+
+## License
+
+MIT License — free and open-source forever.
+
+## Managed Gateway Limits
+
+- 100 requests/minute per project
+- No SLA (best-effort uptime)
+- Shared infrastructure — for production, self-host for dedicated capacity
+
+## Built By
+
+Kailesk Khumar (HouseofMVP's)

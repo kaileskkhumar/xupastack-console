@@ -1,0 +1,185 @@
+# XupaStack — Complete Reference
+
+> XupaStack is a free, open-source gateway that keeps Supabase-powered apps working when supabase.co is blocked by ISPs or network firewalls.
+
+---
+
+## Overview
+
+XupaStack is a reverse-proxy gateway for Supabase connectivity. When `*.supabase.co` is blocked at the network or DNS level, XupaStack routes requests through an alternative domain that isn't affected by the block. It supports the full Supabase API surface: REST (PostgREST), Auth (GoTrue), Storage, Edge Functions, GraphQL, and Realtime WebSockets.
+
+The only code change required is updating your `SUPABASE_URL` environment variable to point to your XupaStack gateway URL.
+
+---
+
+## Deployment Options
+
+### 1. Managed Gateway (Recommended for Getting Started)
+- Instant provisioning — no server or domain needed
+- URL pattern: `https://{slug}-gw.xupastack.com`
+- Rate limited to 100 req/min per project
+- Best-effort uptime, shared Cloudflare Worker infrastructure
+- Free forever
+
+### 2. Self-Hosted Gateway (Recommended for Production)
+- Full control via Docker or Cloudflare Workers
+- Use your own domain and SSL
+- No rate limits beyond what you configure
+- Dashboard at `/__xupastack` path for configuration
+- Supports CORS, strict mode, rate limiting
+
+---
+
+## Supported Endpoints
+
+| Service          | Path              | Protocol  |
+|------------------|-------------------|-----------|
+| REST (PostgREST) | /rest/v1/*        | HTTP      |
+| Auth (GoTrue)    | /auth/v1/*        | HTTP      |
+| Storage          | /storage/v1/*     | HTTP      |
+| Edge Functions   | /functions/v1/*   | HTTP      |
+| GraphQL          | /graphql/v1       | HTTP      |
+| Realtime         | /realtime/v1/*    | WebSocket |
+
+---
+
+## Realtime / WebSockets
+
+XupaStack proxies WebSocket connections for Supabase Realtime. The gateway handles the HTTP → WebSocket upgrade automatically. Usage:
+
+```javascript
+const channel = supabase
+  .channel('my-channel')
+  .on('postgres_changes', {
+    event: '*',
+    schema: 'public',
+    table: 'messages'
+  }, (payload) => {
+    console.log('Change:', payload)
+  })
+  .subscribe()
+```
+
+---
+
+## CORS Configuration
+
+Configure allowed origins to restrict which domains can make requests through your gateway:
+
+```javascript
+allowedOrigins: ["https://your-app.com"]   // array of allowed origins, or ["*"]
+allowCredentials: true                      // boolean
+```
+
+---
+
+## Redirect-Safe Auth
+
+OAuth flows (Google, GitHub, Apple) involve redirects back to your Supabase auth endpoint. When the domain is blocked, the redirect fails. XupaStack rewrites redirect URLs so the entire flow stays on your gateway domain.
+
+Requirements:
+- Add your gateway URL as an allowed redirect URL in Supabase project settings
+- Add your gateway URL in your OAuth provider console
+
+---
+
+## Strict Mode
+
+Adds extra validation to requests passing through the gateway:
+
+```javascript
+strictMode: true
+enabledServices: ["rest", "auth", "storage", "functions", "graphql", "realtime"]
+```
+
+---
+
+## Rate Limiting
+
+Per-IP rate limits to protect your gateway from abuse:
+
+```javascript
+rateLimitPerMin: 600   // requests per minute per IP (default: 600)
+```
+
+---
+
+## Integration Examples
+
+### JavaScript / Supabase JS
+```javascript
+import { createClient } from '@supabase/supabase-js'
+const supabase = createClient(
+  'https://your-slug-gw.xupastack.com',
+  'your-anon-key'
+)
+```
+
+### Flutter / Dart
+```dart
+final supabase = Supabase.initialize(
+  url: 'https://your-slug-gw.xupastack.com',
+  anonKey: 'your-anon-key',
+);
+```
+
+### Python
+```python
+from supabase import create_client
+supabase = create_client(
+    "https://your-slug-gw.xupastack.com",
+    "your-anon-key"
+)
+```
+
+---
+
+## Troubleshooting
+
+### Gateway returns 502
+Check that your Supabase project is active and the project ref is correct.
+
+### Auth redirects fail
+Ensure your gateway URL is added as an allowed redirect URL in Supabase and your OAuth provider.
+
+### Realtime won't connect
+Verify WebSocket support is enabled. Run `npx xupastack doctor --check realtime`.
+
+---
+
+## Backout Plan
+
+Revert by changing `SUPABASE_URL` back to the original `*.supabase.co` URL. No data migration, no schema changes. Your database, keys, and RLS policies remain unchanged.
+
+```env
+SUPABASE_URL=https://your-ref.supabase.co
+```
+
+---
+
+## Frequently Asked Questions
+
+### Is XupaStack free?
+Yes. Both managed and self-hosted options are free. The project is MIT-licensed.
+
+### Does it work with all Supabase features?
+Yes — REST, Auth, Storage, Edge Functions, GraphQL, and Realtime are all supported.
+
+### Will my data pass through XupaStack servers?
+The managed gateway proxies through Cloudflare Workers. For maximum control, self-host the gateway on your own infrastructure.
+
+### Can I revert back to direct Supabase?
+Yes. Just change your SUPABASE_URL back. No data migration needed.
+
+### Which ISPs block Supabase?
+Known blocks have been reported on Jio, Airtel, and BSNL in India. The situation varies by region and time.
+
+---
+
+## About
+
+XupaStack is an independent, open-source project. It is not affiliated with Supabase Inc. Built by Kailesk Khumar (HouseofMVP's).
+
+- Website: https://xupastack.com
+- Documentation: https://xupastack.com/docs
+- License: MIT
