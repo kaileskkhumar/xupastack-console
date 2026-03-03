@@ -189,6 +189,10 @@ export const api = {
     return request<DiagnosticsResult>(`/apps/${id}/diagnostics`, { method: "POST" });
   },
 
+  getSnippetByStack(id: string, stack: string): Promise<{ stack: string; snippet: string }> {
+    return request<{ stack: string; snippet: string }>(`/apps/${id}/snippets?stack=${encodeURIComponent(stack)}`);
+  },
+
   probeSupabase(url: string): Promise<ProbeResult> {
     // Public endpoint — no credentials needed
     return fetch(`${BASE}/public/probe-supabase`, {
