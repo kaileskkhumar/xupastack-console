@@ -7,10 +7,17 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function sanitizeNext(value: string | null): string {
+  if (!value) return "/app";
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) return "/app";
+  return trimmed;
+}
+
 const Login = () => {
   const { user, isLoading, signInWithGitHub, signInWithMagicLink } = useAuth();
   const [searchParams] = useSearchParams();
-  const next = searchParams.get("next") || "/app";
+  const next = sanitizeNext(searchParams.get("next"));
 
   const [email, setEmail] = useState("");
   const [magicLinkSent, setMagicLinkSent] = useState(false);

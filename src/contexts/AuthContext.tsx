@@ -4,6 +4,13 @@ import { api } from "@/lib/api-client";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "https://api.xupastack.com";
 
+function sanitizeNext(value: string | undefined): string {
+  if (!value) return "/app";
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) return "/app";
+  return trimmed;
+}
+
 interface User {
   id: string;
   email: string;
@@ -60,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchMe]);
 
   const signInWithGitHub = useCallback((next?: string) => {
-    const target = next || "/app";
+    const target = sanitizeNext(next);
     window.location.href = `${API_BASE}/auth/github/start?next=${encodeURIComponent(target)}`;
   }, []);
 
@@ -70,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ email, next: next || "/app" }),
+        body: JSON.stringify({ email, next: sanitizeNext(next) }),
       });
 
       if (res.status === 429) {
