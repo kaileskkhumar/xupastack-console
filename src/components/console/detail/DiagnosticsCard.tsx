@@ -54,14 +54,14 @@ const DiagnosticsCard = ({ appId }: DiagnosticsCardProps) => {
 
           {/* Services grid */}
           <div className="grid grid-cols-2 gap-2">
-            {Object.entries(data.services).map(([key, ok]) => (
+            {data.services && Object.entries(data.services).map(([key, ok]) => (
               <div
                 key={key}
                 className={`flex items-center gap-2 rounded-lg border p-3 ${
                   ok ? "border-emerald-500/20 bg-emerald-500/[0.04]" : "border-destructive/20 bg-destructive/[0.04]"
                 }`}
               >
-                <StatusDot ok={ok} />
+                <StatusDot ok={ok as boolean} />
                 <span className="text-xs font-medium text-foreground">{SERVICE_LABELS[key] || key}</span>
               </div>
             ))}
