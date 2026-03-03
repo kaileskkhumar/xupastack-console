@@ -35,10 +35,10 @@ const ChooseFix = () => (
               </li>
             </ul>
             <Link
-              to="/quickstart"
+              to="/app/new"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-all duration-200 shadow-[0_0_16px_-4px_hsl(var(--primary)/0.4)]"
             >
-              Get self-host command
+              Open Console
             </Link>
           </div>
         </AnimatedSection>
@@ -67,7 +67,7 @@ const ChooseFix = () => (
               </li>
             </ul>
             <Link
-              to="/quickstart?mode=managed"
+              to="/app/new"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-border/50 bg-card/50 text-sm font-semibold text-foreground hover:bg-secondary/50 transition-all duration-200"
             >
               Open Console
