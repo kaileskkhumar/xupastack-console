@@ -70,7 +70,7 @@ const Footer = () => (
           <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
           <Link to="/fair-use" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Fair Use</Link>
-          <p className="text-xs text-muted-foreground">MIT License</p>
+          <p className="text-xs text-muted-foreground">AGPL v3</p>
         </div>
       </div>
     </div>
