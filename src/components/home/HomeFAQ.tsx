@@ -34,27 +34,28 @@ const faqs = [
 ];
 
 const HomeFAQ = () => (
-  <section className="py-24 md:py-32">
-    <div className="section-container max-w-3xl">
-      <AnimatedSection className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Frequently Asked Questions
+  <section className="py-14 md:py-20">
+    <div className="section-container max-w-2xl">
+      <AnimatedSection className="text-center mb-8">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">FAQ</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 tracking-tight">
+          Common questions
         </h2>
-        <p className="text-muted-foreground text-lg">Common questions, honest answers.</p>
+        <p className="text-muted-foreground text-sm">Honest answers.</p>
       </AnimatedSection>
 
-      <AnimatedSection delay={0.1}>
-        <Accordion type="single" collapsible className="space-y-3">
+      <AnimatedSection delay={0.08}>
+        <Accordion type="single" collapsible className="space-y-2">
           {faqs.map((faq, i) => (
             <AccordionItem
               key={i}
               value={`faq-${i}`}
-              className="surface-elevated rounded-xl px-6 border-0"
+              className="rounded-xl border border-border/40 bg-card/30 px-5 border-b-0 data-[state=open]:border-primary/20 transition-colors"
             >
-              <AccordionTrigger className="text-sm font-semibold text-foreground hover:no-underline py-5">
+              <AccordionTrigger className="text-xs font-bold text-foreground hover:no-underline py-4">
                 {faq.q}
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-5">
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed pb-4">
                 {faq.a}
               </AccordionContent>
             </AccordionItem>
