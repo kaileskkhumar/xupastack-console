@@ -6,26 +6,41 @@ import CopyButton from "@/components/console/CopyButton";
 interface SetupChecklistProps {
   appId: string;
   gatewayUrl: string;
+  upstreamHost: string;
 }
 
 const STORAGE_KEY = (id: string) => `xupastack_setup_${id}`;
 
 interface ChecklistState {
-  updateUrl: boolean;
-  authRedirects: boolean;
-  emailConfirm: boolean;
+  step1: boolean;
+  step2: boolean;
+  step3: boolean;
 }
 
-const SetupChecklist = ({ appId, gatewayUrl }: SetupChecklistProps) => {
-  const [expanded, setExpanded] = useState(true);
+/** Extract Supabase project ref from upstream host URL. Returns null for non-supabase domains. */
+const extractRef = (upstreamHost: string): string | null => {
+  try {
+    const url = new URL(upstreamHost);
+    if (url.hostname.endsWith(".supabase.co")) {
+      return url.hostname.replace(".supabase.co", "");
+    }
+  } catch {}
+  return null;
+};
+
+const SetupChecklist = ({ appId, gatewayUrl, upstreamHost }: SetupChecklistProps) => {
   const [checks, setChecks] = useState<ChecklistState>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY(appId));
-      return stored ? JSON.parse(stored) : { updateUrl: false, authRedirects: false, emailConfirm: false };
+      return stored ? JSON.parse(stored) : { step1: false, step2: false, step3: false };
     } catch {
-      return { updateUrl: false, authRedirects: false, emailConfirm: false };
+      return { step1: false, step2: false, step3: false };
     }
   });
+
+  const completedCount = Object.values(checks).filter(Boolean).length;
+  const allDone = completedCount === 3;
+  const [expanded, setExpanded] = useState(!allDone);
 
   useEffect(() => {
     try {
@@ -36,11 +51,7 @@ const SetupChecklist = ({ appId, gatewayUrl }: SetupChecklistProps) => {
   const toggle = (key: keyof ChecklistState) =>
     setChecks((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const completedCount = Object.values(checks).filter(Boolean).length;
-  const allDone = completedCount === 3;
-
-  if (allDone) return null;
-
+  const ref = extractRef(upstreamHost);
   const envLine = `SUPABASE_URL=${gatewayUrl}`;
   const redirectUrl1 = gatewayUrl;
   const redirectUrl2 = `${gatewayUrl}/**`;
@@ -78,10 +89,10 @@ const SetupChecklist = ({ appId, gatewayUrl }: SetupChecklistProps) => {
             className="overflow-hidden"
           >
             <div className="px-5 pb-5 space-y-3">
-              {/* Item 1: Update frontend URL */}
+              {/* Step 1 */}
               <ChecklistItem
-                checked={checks.updateUrl}
-                onToggle={() => toggle("updateUrl")}
+                checked={checks.step1}
+                onToggle={() => toggle("step1")}
                 title="Update your frontend: replace SUPABASE_URL with your gateway URL"
               >
                 <div className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 font-mono text-xs">
@@ -90,23 +101,29 @@ const SetupChecklist = ({ appId, gatewayUrl }: SetupChecklistProps) => {
                 </div>
               </ChecklistItem>
 
-              {/* Item 2: Auth redirect URLs */}
+              {/* Step 2 */}
               <ChecklistItem
-                checked={checks.authRedirects}
-                onToggle={() => toggle("authRedirects")}
+                checked={checks.step2}
+                onToggle={() => toggle("step2")}
                 title="Add gateway to Supabase Auth redirect URLs"
               >
                 <p className="text-xs text-muted-foreground mb-2">
                   Go to: Supabase Dashboard → Authentication → URL Configuration
                 </p>
-                <a
-                  href="https://supabase.com/dashboard/project/_/auth/url-configuration"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline mb-3"
-                >
-                  Open Supabase Auth settings <ExternalLink className="h-3 w-3" />
-                </a>
+                {ref ? (
+                  <a
+                    href={`https://supabase.com/dashboard/project/${ref}/auth/url-configuration`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline mb-3"
+                  >
+                    Open Supabase Auth settings <ExternalLink className="h-3 w-3" />
+                  </a>
+                ) : (
+                  <p className="text-xs text-muted-foreground mb-3 italic">
+                    Open your Supabase dashboard and navigate to Authentication → URL Configuration.
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground mb-2">Add these to "Redirect URLs":</p>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 font-mono text-xs">
@@ -123,16 +140,30 @@ const SetupChecklist = ({ appId, gatewayUrl }: SetupChecklistProps) => {
                 </p>
               </ChecklistItem>
 
-              {/* Item 3: Disable email confirmation */}
+              {/* Step 3 */}
               <ChecklistItem
-                checked={checks.emailConfirm}
-                onToggle={() => toggle("emailConfirm")}
+                checked={checks.step3}
+                onToggle={() => toggle("step3")}
                 title="(Optional) Disable email confirmation in Supabase"
                 optional
               >
                 <p className="text-xs text-muted-foreground mb-2">
                   Go to: Supabase Dashboard → Authentication → Providers → Email
                 </p>
+                {ref ? (
+                  <a
+                    href={`https://supabase.com/dashboard/project/${ref}/auth/providers`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline mb-3"
+                  >
+                    Open Supabase Email settings <ExternalLink className="h-3 w-3" />
+                  </a>
+                ) : (
+                  <p className="text-xs text-muted-foreground mb-3 italic">
+                    Open your Supabase dashboard and navigate to Authentication → Providers → Email.
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground mb-2">
                   Toggle OFF "Enable email confirmations"
                 </p>
