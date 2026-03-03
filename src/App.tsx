@@ -21,6 +21,7 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import FixIndex from "./pages/fix/FixIndex";
 import FixISP from "./pages/fix/FixISP";
 import ErrConnectionTimedOut from "./pages/errors/ErrConnectionTimedOut";
 
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/fix" element={<FixIndex />} />
               <Route path="/fix/:isp" element={<FixISP />} />
               <Route path="/errors/err_connection_timed_out" element={<ErrConnectionTimedOut />} />
 
