@@ -6,6 +6,7 @@ import Logo from "@/components/Logo";
 
 const navItems = [
   { label: "About", href: "/about" },
+  { label: "Fix", href: "/fix" },
   { label: "Docs", href: "/docs" },
   { label: "Guides", href: "/guides" },
   { label: "Blog", href: "/blog" },
