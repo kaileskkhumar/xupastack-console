@@ -35,7 +35,7 @@ This stays free as long as I can keep it free. If it saved your app, help me sav
       
       </p>
         <p className="text-muted-foreground text-base leading-relaxed mb-10">
-          If XupaStack kept your production app alive when nothing else worked, a single coffee means I can keep doing this — for you and for every developer who needs it next.
+{"\n"}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
