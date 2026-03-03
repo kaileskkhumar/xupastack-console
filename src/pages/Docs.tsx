@@ -118,7 +118,7 @@ const Docs = () => {
               <section id="cors">
                 <h2 className="text-2xl font-bold text-foreground mb-4">CORS</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Configure allowed origins to restrict which domains can make requests through your gateway. Configured via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> dashboard.
+                  Configure allowed origins to restrict which domains can make requests through your gateway. Managed gateways: configure in the XupaStack console under your gateway settings. Self-hosted: accessible at the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> path on your gateway.
                 </p>
                 <CodeBlock
                   code={`allowedOrigins: ["https://your-app.com"]   // array of allowed origins, or ["*"]
@@ -162,7 +162,7 @@ allowCredentials: true                      // boolean`}
               <section id="strict-mode">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Strict mode</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Strict mode adds extra validation to requests passing through the gateway. Configured via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> dashboard.
+                  Strict mode adds extra validation to requests passing through the gateway. Configure in the XupaStack console under your gateway settings, or via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> path on self-hosted gateways.
                 </p>
                 <CodeBlock code={`strictMode: true\nenabledServices: ["rest", "auth", "storage", "functions", "graphql", "realtime"]\n// Remove services you don't need, e.g. ["rest", "auth"]`} language="javascript" title="Strict mode + services" />
               </section>
@@ -170,7 +170,7 @@ allowCredentials: true                      // boolean`}
               <section id="rate-limiting">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Rate limiting</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Configure per-IP rate limits to protect your gateway from abuse. Configured via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> dashboard.
+                  Configure per-IP rate limits to protect your gateway from abuse. Set in the XupaStack console under your gateway settings, or via the <code className="code-block px-1.5 py-0.5 text-xs">/__xupastack</code> path on self-hosted gateways.
                 </p>
                 <CodeBlock code={`rateLimitPerMin: 600   // number — requests per minute (default: 600)`} language="javascript" title="Rate limit setting" />
               </section>
@@ -188,7 +188,7 @@ allowCredentials: true                      // boolean`}
                   </div>
                   <div>
                     <h4 className="text-sm font-semibold text-foreground mb-1">Realtime won't connect</h4>
-                    <p className="text-sm text-muted-foreground">Verify WebSocket support is enabled. Run <code className="code-block px-1.5 py-0.5 text-xs">npx xupastack doctor --check realtime</code>.</p>
+                    <p className="text-sm text-muted-foreground">Open browser DevTools → Network → WS tab. You should see a 101 Switching Protocols connection to your gateway. Also confirm Realtime is enabled in your gateway's service settings.</p>
                   </div>
                 </div>
               </section>

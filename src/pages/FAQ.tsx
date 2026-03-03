@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     q: "Does Realtime work through the gateway?",
-    a: "Yes. XupaStack supports WebSocket upgrades for Supabase Realtime. Both self-hosted and managed modes proxy WebSocket connections. Run `npx xupastack doctor --check realtime` to verify.",
+    a: "Yes. XupaStack supports WebSocket upgrades for Supabase Realtime. Both self-hosted and managed modes proxy WebSocket connections. To verify, open browser DevTools → Network → WS — you should see a 101 Switching Protocols connection to your gateway URL.",
   },
   {
     q: "Do my API keys change?",
@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     q: "How do I lock down CORS?",
-    a: "In your xupastack.config.js, set cors.allowedOrigins to an array of your app's domains. This prevents unauthorized domains from making requests through your gateway. Example: allowedOrigins: ['https://your-app.com']",
+    a: "In the XupaStack console, go to your gateway → Settings → Allowed Origins and add your app's domains. This prevents unauthorized domains from making requests through your gateway. Example: https://your-app.com",
   },
   {
     q: "How do I revert if I need to remove the gateway?",
