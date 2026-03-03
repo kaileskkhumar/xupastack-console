@@ -116,12 +116,17 @@ const ConsoleDashboard = () => {
                           {gw.mode === "selfhost" ? "Self-host" : "Managed"}
                         </span>
                       </div>
-                      {gw.gatewayUrl && (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded" onClick={(e) => e.preventDefault()}>
-                          <span className="truncate max-w-[250px]">{gw.gatewayUrl}</span>
-                          <CopyButton text={gw.gatewayUrl} />
+                      <div className="flex items-center gap-3">
+                        {gw.gatewayUrl && (
+                          <span className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded" onClick={(e) => e.preventDefault()}>
+                            <span className="truncate max-w-[250px]">{gw.gatewayUrl}</span>
+                            <CopyButton text={gw.gatewayUrl} />
+                          </span>
+                        )}
+                        <span className="text-[11px] text-muted-foreground">
+                          {new Date(gw.createdAt * 1000).toLocaleDateString()}
                         </span>
-                      )}
+                      </div>
                     </div>
                     <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
                   </Link>
